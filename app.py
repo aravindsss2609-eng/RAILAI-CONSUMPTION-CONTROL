@@ -249,7 +249,6 @@ def inject_global_navigation(response):
         ("/thermo_passenger", "Thermo", "fa-temperature-half"),
         ("/predict", "Predict", "fa-robot"),
         ("/predict_page", "AI Lab", "fa-microscope"),
-        ("/traffic", "Traffic", "fa-traffic-light"),
         ("/analytics", "Analytics", "fa-chart-line"),
         ("/history", "History", "fa-history")
     ]
