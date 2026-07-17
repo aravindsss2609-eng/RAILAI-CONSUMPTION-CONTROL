@@ -4,55 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Analytics Matrix</title>
+    <title>Live Analytics Matrix | RailAI Industrial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glow-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.15); }
+        .glow-blue { box-shadow: 0 0 15px rgba(59, 130, 246, 0.15); }
+        .panel-hover:hover { border-color: rgba(16, 185, 129, 0.3); transition: all 0.3s ease; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
-     <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+<body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen selection:bg-emerald-500/30">
+
+    <!-- Global Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-3">
             <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
             <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
         </div>
         <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
-            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
+            <a href="/" class="text-slate-400 hover:text-emerald-400 transition">Dashboard</a>
             <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
             <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
             <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
             <a href="/thermo_passenger" class="text-slate-400 hover:text-emerald-400 transition">Thermo_Passenger</a>
             <a href="/predict" class="text-slate-400 hover:text-emerald-400 transition">Predict</a>
             <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
-            <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
+            <a href="/analytics" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Analytics</a>
             <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
             <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
-        </div>
-    </nav>
-
-    <!-- Navigation Header -->
-    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
-        </div>
-        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
-            <a href="/" id="nav-dash" class="text-slate-400 hover:text-emerald-400 transition">Dashboard System</a>
-            <a href="/analytics" id="nav-analytics" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Live Analytics</a>
-            <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
-            <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
-            <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto p-6 space-y-6">
         
         <!-- Header Hero -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800 glow-emerald">
             <div>
                 <h1 class="text-base font-black text-slate-100 tracking-wider">LIVE TELEMETRY DIAGNOSTIC MATRIX</h1>
                 <p class="text-slate-400 text-[11px] mt-0.5">Comprehensive telemetry extraction showcasing all 20 advanced dynamic calculation layers.</p>
             </div>
-            <div class="bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-lg text-emerald-400 font-bold flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <div id="badge-wrapper" class="bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-lg text-emerald-400 font-bold flex items-center gap-2 transition-all duration-300">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="engine-mode-tag">LOADING ARCHETYPE</span>
             </div>
         </div>
@@ -61,7 +53,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- Column 1: Core Kinematics -->
-            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 panel-hover">
                 <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
                     <i class="fa-solid fa-mountain-sun"></i> Kinematics & Track
                 </h2>
@@ -90,7 +82,7 @@
             </div>
 
             <!-- Column 2: Aerodynamics & External Variables -->
-            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 panel-hover">
                 <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
                     <i class="fa-solid fa-wind"></i> Aero & Environment
                 </h2>
@@ -119,7 +111,7 @@
             </div>
 
             <!-- Column 3: Powertrain Modifiers -->
-            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4 panel-hover">
                 <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
                     <i class="fa-solid fa-gears"></i> Powertrain & Systems
                 </h2>
@@ -149,7 +141,7 @@
         </div>
 
         <!-- System Inferred Deliverables Footer Section -->
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl grid grid-cols-1 md:grid-cols-4 gap-6 glow-blue">
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
                 <span class="text-slate-500 font-bold block">PNEUMATIC BRAKE BASE</span>
                 <span id="val-brake" class="text-base font-black text-slate-200 mt-1 block">---</span>
@@ -159,11 +151,11 @@
                 <span id="val-regen" class="text-base font-black text-emerald-400 mt-1 block">---</span>
             </div>
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
-                <span class="text-slate-500 font-bold block">TOTAL ENERGY PAYLOAD</span>
+                <span id="total-payload-label" class="text-slate-500 font-bold block">TOTAL ENERGY PAYLOAD</span>
                 <span id="val-pred-total" class="text-base font-black text-emerald-400 mt-1 block">---</span>
             </div>
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
-                <span class="text-slate-500 font-bold block">CALCULATED HOURLY BURN RATE</span>
+                <span id="hourly-burn-label" class="text-slate-500 font-bold block">CALCULATED HOURLY BURN RATE</span>
                 <span id="val-pred-rate" class="text-base font-black text-blue-400 mt-1 block">---</span>
             </div>
         </div>
@@ -173,41 +165,65 @@
         async function fetchAnalyticsState() {
             try {
                 const res = await fetch('/api/get-system-state');
+                if (!res.ok) throw new Error(`HTTP network error: ${res.status}`);
                 const s = await res.json();
 
-                // Assign Inputs 
-                document.getElementById('val-speed').innerText = s.speed + " km/h";
-                document.getElementById('val-weight').innerText = s.weight + " Tons";
-                document.getElementById('val-gradient').innerText = s.gradient + " %";
-                document.getElementById('val-distance').innerText = s.distance + " km";
-                document.getElementById('val-passengers').innerText = s.passengers;
+                // Safe Extraction Mapping directly avoiding null assignment crashes
+                document.getElementById('val-speed').innerText = (s.speed ?? "0") + " km/h";
+                document.getElementById('val-weight').innerText = (s.weight ?? "0") + " Tons";
+                document.getElementById('val-gradient').innerText = (s.gradient ?? "0") + " %";
+                document.getElementById('val-distance').innerText = (s.distance ?? "0") + " km";
+                document.getElementById('val-passengers').innerText = s.passengers ?? "0";
                 
-                document.getElementById('val-temp').innerText = s.temp + " °C";
-                document.getElementById('val-headwind').innerText = s.headwind + " km/h";
-                document.getElementById('val-drag').innerText = s.drag_coeff;
-                document.getElementById('val-rolling').innerText = s.rolling_res;
-                document.getElementById('val-adhesion').innerText = s.adhesion;
+                document.getElementById('val-temp').innerText = (s.temp ?? "0") + " °C";
+                document.getElementById('val-headwind').innerText = (s.headwind ?? "0") + " km/h";
+                document.getElementById('val-drag').innerText = s.drag_coeff ?? "0.00";
+                document.getElementById('val-rolling').innerText = s.rolling_res ?? "0.000";
+                document.getElementById('val-adhesion').innerText = s.adhesion ?? "0.00";
 
-                document.getElementById('val-aux').innerText = s.aux_load + " kW";
-                document.getElementById('val-inverter').innerText = s.inverter_eff + " %";
-                document.getElementById('val-gear').innerText = s.gear_ratio;
-                document.getElementById('val-wheel').innerText = s.wheel_diam + " mm";
-                document.getElementById('val-motor').innerText = s.motor_freq + " Hz";
-                document.getElementById('val-brake').innerText = s.brake_pressure + " kPa";
-                document.getElementById('val-regen').innerText = Math.round(s.regen * 100) + " %";
+                document.getElementById('val-aux').innerText = (s.aux_load ?? "0") + " kW";
+                document.getElementById('val-inverter').innerText = (s.inverter_eff ?? "0") + " %";
+                document.getElementById('val-gear').innerText = s.gear_ratio ?? "0.00";
+                document.getElementById('val-wheel').innerText = (s.wheel_diam ?? "0") + " mm";
+                document.getElementById('val-motor').innerText = (s.motor_freq ?? "0") + " Hz";
+                document.getElementById('val-brake').innerText = (s.brake_pressure ?? "0") + " kPa";
+                document.getElementById('val-regen').innerText = Math.round((s.regen ?? 0) * 100) + " %";
 
-                // Swap dynamic outputs depending on Engine Architecture Selection
-                if(s.engine_type == 0) {
+                const badgeWrapper = document.getElementById('badge-wrapper');
+                const totalLabel = document.getElementById('total-payload-label');
+                const burnLabel = document.getElementById('hourly-burn-label');
+                const totalVal = document.getElementById('val-pred-total');
+                const rateVal = document.getElementById('val-pred-rate');
+
+                // Dynamic Architecture Engine Archetype Fallbacks
+                if (s.engine_type == 0) {
+                    badgeWrapper.className = "bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-lg text-emerald-400 font-bold flex items-center gap-2";
                     document.getElementById('engine-mode-tag').innerText = "ARCHETYPE: ELECTRIC TRACTION";
-                    document.getElementById('val-pred-total').innerText = s.pred_total_kwh + " kWh";
-                    document.getElementById('val-pred-rate').innerText = s.pred_kwh_per_hour + " kW/h";
+                    totalLabel.innerText = "TOTAL ENERGY DRAW";
+                    burnLabel.innerText = "CALCULATED HOURLY ELECT. RATE";
+
+                    // Fallback defensive checking against core versus predictive parameters variables
+                    const energyTotal = s.pred_total_kwh ?? s.total_kwh ?? "0";
+                    const energyRate = s.pred_kwh_per_hour ?? s.kwh_per_hour ?? "0";
+                    
+                    totalVal.innerText = energyTotal + " kWh";
+                    totalVal.className = "text-base font-black text-emerald-400 mt-1 block";
+                    rateVal.innerText = energyRate + " kW/h";
                 } else {
+                    badgeWrapper.className = "bg-blue-500/10 border border-blue-500/30 px-4 py-2 rounded-lg text-blue-400 font-bold flex items-center gap-2";
                     document.getElementById('engine-mode-tag').innerText = "ARCHETYPE: DIESEL COMBUSTION";
-                    document.getElementById('val-pred-total').innerText = s.pred_total_liters + " Liters";
-                    document.getElementById('val-pred-rate').innerText = s.pred_liters_per_hour + " L/h";
+                    totalLabel.innerText = "TOTAL FUEL CONSUMED";
+                    burnLabel.innerText = "CALCULATED HOURLY BURN RATE";
+
+                    const fuelTotal = s.pred_total_liters ?? s.total_liters ?? "0";
+                    const fuelRate = s.pred_liters_per_hour ?? s.liters_per_hour ?? "0";
+
+                    totalVal.innerText = fuelTotal + " Liters";
+                    totalVal.className = "text-base font-black text-blue-400 mt-1 block";
+                    rateVal.innerText = fuelRate + " L/h";
                 }
             } catch (e) {
-                console.error("Failed to sync analytical diagnostic variables:", e);
+                console.error("Telemetry Processing Interruption:", e);
             }
         }
         

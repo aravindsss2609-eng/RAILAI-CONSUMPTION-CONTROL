@@ -60,14 +60,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <label class="flex flex-col p-3 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-900 cursor-pointer transition">
                             <div class="flex items-center gap-2">
-                                <input type="radio" name="engine_type" value="0" checked class="accent-emerald-500 text-emerald-500">
+                                <input type="radio" name="engine_type" value="0" {% if system_state.engine_type == 0 %}checked{% endif %} class="accent-emerald-500 text-emerald-500">
                                 <span class="font-bold text-slate-200">Electric Traction</span>
                             </div>
                             <span class="text-[10px] text-slate-500 mt-1">Calculates grid overhead pantograph kWh draw vectors.</span>
                         </label>
                         <label class="flex flex-col p-3 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-900 cursor-pointer transition">
                             <div class="flex items-center gap-2">
-                                <input type="radio" name="engine_type" value="1" class="accent-emerald-500 text-emerald-500">
+                                <input type="radio" name="engine_type" value="1" {% if system_state.engine_type == 1 %}checked{% endif %} class="accent-emerald-500 text-emerald-500">
                                 <span class="font-bold text-slate-200">Diesel Combustion</span>
                             </div>
                             <span class="text-[10px] text-slate-500 mt-1">Computes fluid volumetric burn rates in liters.</span>
@@ -85,19 +85,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Operational Speed (km/h)</label>
-                            <input type="number" id="speed" value="120" min="40" max="250" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="speed" value="{{ system_state.speed }}" min="40" max="250" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Gross Mass Weight (Tons)</label>
-                            <input type="number" id="weight" value="450" min="50" max="2500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="weight" value="{{ system_state.weight }}" min="50" max="2500" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Track Incline Gradient (%)</label>
-                            <input type="number" id="gradient" value="0.5" step="0.1" min="-6" max="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="gradient" value="{{ system_state.gradient }}" step="0.1" min="-6" max="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Block Segment Distance (km)</label>
-                            <input type="number" id="distance" value="50" min="1" max="1000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="distance" value="{{ system_state.distance }}" min="1" max="1000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                     </div>
                 </div>
@@ -112,55 +112,55 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Passenger Count</label>
-                            <input type="number" id="passengers" value="320" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="passengers" value="{{ system_state.passengers }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Ambient Air Temperature (°C)</label>
-                            <input type="number" id="temp" value="24" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="temp" value="{{ system_state.temp }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">HVAC Auxiliary Power Load (kW)</label>
-                            <input type="number" id="aux_load" value="45" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="aux_load" value="{{ system_state.aux_load }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Headwind Component Vector (km/h)</label>
-                            <input type="number" id="headwind" value="15" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="headwind" value="{{ system_state.headwind }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Aerodynamic Drag Coefficient (Cd)</label>
-                            <input type="number" id="drag_coeff" value="0.28" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="drag_coeff" value="{{ system_state.drag_coeff }}" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Track Rolling Resistance (Crrm)</label>
-                            <input type="number" id="rolling_res" value="0.0015" step="0.0001" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="rolling_res" value="{{ system_state.rolling_res }}" step="0.0001" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Wheel Tractive Adhesion Fraction</label>
-                            <input type="number" id="adhesion" value="0.32" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="adhesion" value="{{ system_state.adhesion }}" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Traction Inverter Efficiency (%)</label>
-                            <input type="number" id="inverter_eff" value="94" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="inverter_eff" value="{{ system_state.inverter_eff }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Gearbox Transmission Ratio</label>
-                            <input type="number" id="gear_ratio" value="4.12" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="gear_ratio" value="{{ system_state.gear_ratio }}" step="0.01" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Wheel Diameter Mapped (mm)</label>
-                            <input type="number" id="wheel_diam" value="920" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="wheel_diam" value="{{ system_state.wheel_diam }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Traction Motor Base Frequency (Hz)</label>
-                            <input type="number" id="motor_freq" value="60" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="motor_freq" value="{{ system_state.motor_freq }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div>
                             <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Pneumatic Braking Base Pressure (kPa)</label>
-                            <input type="number" id="brake_pressure" value="420" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+                            <input type="number" id="brake_pressure" value="{{ system_state.brake_pressure }}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Regenerative Braking / Recovered Energy Factor (<span id="lbl-regen">28%</span>)</label>
-                            <input type="range" id="regen" min="0.10" max="0.45" step="0.01" value="0.28" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                            <label class="block text-slate-400 uppercase font-bold tracking-wider mb-1">Regenerative Braking / Recovered Energy Factor (<span id="lbl-regen">{{ (system_state.regen)|int }}%</span>)</label>
+                            <input type="range" id="regen" min="10" max="45" step="1" value="{{ system_state.regen }}" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
                         </div>
                     </div>
                 </div>
@@ -183,19 +183,23 @@
                 </div>
 
                 <!-- Simulation Output Panel Display -->
-                <div id="resultsCard" class="hidden bg-slate-900 p-6 rounded-2xl border border-emerald-500/20 shadow-xl flex flex-col justify-center items-center text-center min-h-[220px]">
+                <div id="resultsCard" class="bg-slate-900 p-6 rounded-2xl border border-emerald-500/20 shadow-xl flex flex-col justify-center items-center text-center min-h-[220px]">
                     <span class="text-slate-500 text-[10px] tracking-widest font-bold uppercase block">Inferred Network Target Payload</span>
                     
                     <!-- Main Value Box -->
                     <div class="mt-4 bg-slate-950 p-4 rounded-xl border border-slate-850 w-full">
-                        <div class="text-3xl font-black text-emerald-400 tracking-tight font-mono" id="simOutput-total">0.00 kWh</div>
-                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-total-unit">Total Consumed Volume</div>
+                        <div class="text-3xl font-black text-emerald-400 tracking-tight font-mono" id="simOutput-total">
+                            {% if system_state.engine_type == 0 %}{{ system_state.total_kwh }} kWh{% else %}{{ system_state.total_liters }} L{% endif %}
+                        </div>
+                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-total-unit">Total Consumed Volume (Electric)</div>
                     </div>
 
                     <!-- Burn Rate Box -->
                     <div class="mt-3 bg-slate-950 p-4 rounded-xl border border-slate-850 w-full">
-                        <div class="text-2xl font-black text-blue-400 tracking-tight font-mono" id="simOutput-rate">0.00 kW/h</div>
-                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-rate-unit">Hourly Burn Efficiency Rate</div>
+                        <div class="text-2xl font-black text-blue-400 tracking-tight font-mono" id="simOutput-rate">
+                            {% if system_state.engine_type == 0 %}{{ system_state.kwh_per_hour }} kW/h{% else %}{{ system_state.liters_per_hour }} L/h{% endif %}
+                        </div>
+                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-rate-unit">Hourly Burn Efficiency Rate (Grid)</div>
                     </div>
                 </div>
             </div>
@@ -208,10 +212,12 @@
         const activeEngineFlag = document.getElementById('active-engine-flag');
         const lblTotalUnit = document.getElementById('lbl-total-unit');
         const lblRateUnit = document.getElementById('lbl-rate-unit');
+        const outputTotal = document.getElementById('simOutput-total');
+        const outputRate = document.getElementById('simOutput-rate');
 
         // Dynamic Label Slider Synchronization
         regenSlider.addEventListener('input', () => {
-            regenLabel.innerText = Math.round(regenSlider.value * 100) + '%';
+            regenLabel.innerText = Math.round(regenSlider.value) + '%';
         });
 
         // Intercept Dynamic UI Layout Mappings based on Engine Selection Change
@@ -236,9 +242,6 @@
         // Form Submit Telemetry Aggregator Agent
         document.getElementById('predictorLaboratoryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const resultsCard = document.getElementById('resultsCard');
-            const outputTotal = document.getElementById('simOutput-total');
-            const outputRate = document.getElementById('simOutput-rate');
             
             // Collect the 20 parameters required by the telemetry state processor
             const payload = {
@@ -260,7 +263,7 @@
                 motor_freq: parseFloat(document.getElementById('motor_freq').value),
                 brake_pressure: parseFloat(document.getElementById('brake_pressure').value),
                 regen: parseFloat(regenSlider.value),
-                control_override: 1, // Operational flags
+                control_override: 1, 
                 simulation_pass: 1
             };
 
@@ -272,23 +275,20 @@
                 });
                 const data = await response.json();
                 
-                // Logging payload parsing structure to assist in system telemetry auditing
                 console.log("Inference matrix transmission outcome data:", data);
                 
                 if (data.success) {
-                    resultsCard.classList.remove('hidden');
-                    
                     if(payload.engine_type === 0) {
-                        // Bind Electric Values with safe fallbacks if undefined
-                        const rawTotalKwh = data.prediction_total_kwh ?? '0.00';
-                        const rawRateKwh = data.prediction_kwh_per_hour ?? '0.00';
+                        // FIX: Key name alignment to match what app.py delivers directly
+                        const rawTotalKwh = data.total_kwh ?? '0.00';
+                        const rawRateKwh = data.kwh_per_hour ?? '0.00';
                         outputTotal.innerText = `${rawTotalKwh} kWh`;
                         outputRate.innerText = `${rawRateKwh} kW/h`;
                         outputTotal.className = "text-3xl font-black text-emerald-400 tracking-tight font-mono";
                     } else {
-                        // Bind Diesel Fuel Values with safe fallbacks if undefined
-                        const rawTotalLiters = data.prediction_total_liters ?? '0.00';
-                        const rawRateLiters = data.prediction_liters_per_hour ?? '0.00';
+                        // FIX: Key name alignment to match what app.py delivers directly
+                        const rawTotalLiters = data.total_liters ?? '0.00';
+                        const rawRateLiters = data.liters_per_hour ?? '0.00';
                         outputTotal.innerText = `${rawTotalLiters} L`;
                         outputRate.innerText = `${rawRateLiters} L/h`;
                         outputTotal.className = "text-3xl font-black text-blue-400 tracking-tight font-mono";

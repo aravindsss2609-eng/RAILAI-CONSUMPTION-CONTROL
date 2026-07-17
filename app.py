@@ -27,15 +27,27 @@ except ImportError:
 
 app = Flask(__name__)
 
-# Default system state, shared globally
+# Default system state, pre-populated with all template-facing alias permutations to prevent 0.00 display errors
 SYSTEM_STATE = {
     "engine_type": 0, "speed": 120.0, "weight": 450.0, "gradient": 0.5, "distance": 50.0,
     "passengers": 320, "temp": 24.0, "aux_load": 45.0, "headwind": 15.0, "drag_coeff": 0.28,
     "rolling_res": 0.0015, "adhesion": 0.32, "inverter_eff": 94.0, "gear_ratio": 4.12,
-    "wheel_diam": 920.0, "motor_freq": 60.0, "brake_pressure": 420.0, "regen": 0.28,
+    "wheel_diam": 920.0, "motor_freq": 60.0, "brake_pressure": 420.0, "regen": 28.0,
     "control_override": 1, "simulation_pass": 1,
+    
+    # Primary Targets
     "pred_kwh_per_hour": 182.4, "pred_total_kwh": 76.0,
     "pred_liters_per_hour": 0.0, "pred_total_liters": 0.0,
+    
+    # Universal Unified UI/Template Fallback Aliases
+    "rate": 182.4,
+    "total": 76.0,
+    "kwh_per_hour": 182.4,
+    "total_kwh": 76.0,
+    "liters_per_hour": 0.0,
+    "total_liters": 0.0,
+    
+    # Environmentals
     "grid_spot_price": 0.14, "cabin_humidity": 45.0, "hvac_coefficient": 1.2, "thermal_load_status": "STABLE"
 }
 
@@ -86,11 +98,13 @@ def perform_prediction(input_params):
         prediction_results["pred_kwh_per_hour"] = round(float(MODELS['pred_kwh_per_hour'].predict(feature_vector)[0]), 2)
         prediction_results["pred_total_kwh"] = round(float(MODELS['pred_total_kwh'].predict(feature_vector)[0]), 2)
         
-        # Build unified fallback aliases to fulfill any variant of frontend JavaScript naming
+        # Build unified fallback aliases to fulfill any variant of frontend JavaScript or Jinja2 template naming
         prediction_results["rate"] = prediction_results["pred_kwh_per_hour"]
         prediction_results["total"] = prediction_results["pred_total_kwh"]
         prediction_results["kwh_per_hour"] = prediction_results["pred_kwh_per_hour"]
         prediction_results["total_kwh"] = prediction_results["pred_total_kwh"]
+        prediction_results["liters_per_hour"] = 0.0
+        prediction_results["total_liters"] = 0.0
     else:  # Combustion engine
         prediction_results["pred_liters_per_hour"] = round(float(MODELS['pred_liters_per_hour'].predict(feature_vector)[0]), 2)
         prediction_results["pred_total_liters"] = round(float(MODELS['pred_total_liters'].predict(feature_vector)[0]), 2)
@@ -100,6 +114,8 @@ def perform_prediction(input_params):
         prediction_results["total"] = prediction_results["pred_total_liters"]
         prediction_results["liters_per_hour"] = prediction_results["pred_liters_per_hour"]
         prediction_results["total_liters"] = prediction_results["pred_total_liters"]
+        prediction_results["kwh_per_hour"] = 0.0
+        prediction_results["total_kwh"] = 0.0
 
     return prediction_results
 

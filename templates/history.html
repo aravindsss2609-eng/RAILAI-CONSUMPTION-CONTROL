@@ -9,13 +9,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
-      <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-3">
             <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
             <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
         </div>
         <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
-            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
+            <a href="/" class="text-slate-400 hover:text-emerald-400 transition">Dashboard</a>
             <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
             <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
             <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
@@ -23,22 +25,8 @@
             <a href="/predict" class="text-slate-400 hover:text-emerald-400 transition">Predict</a>
             <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
             <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
-            <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
+            <a href="/history" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">History</a>
             <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
-        </div>
-    </nav>
-    <!-- Navigation Header -->
-    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
-        </div>
-        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
-            <a href="/" id="nav-dash" class="text-slate-400 hover:text-emerald-400 transition">Dashboard System</a>
-            <a href="/analytics" id="nav-analytics" class="text-slate-400 hover:text-emerald-400 transition">Live Analytics</a>
-            <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
-            <a href="/history" id="nav-history" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Ledger History</a>
-            <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
         </div>
     </nav>
 
@@ -62,7 +50,7 @@
                     <thead class="text-[11px] uppercase text-slate-500 border-b border-slate-800 bg-slate-950 font-bold">
                         <tr>
                             <th class="py-3.5 px-4">Log Timestamp</th>
-                            <th class="py-3.5 px-4">Engine Engine Class</th>
+                            <th class="py-3.5 px-4">Engine Class</th>
                             <th class="py-3.5 px-4">Velocity</th>
                             <th class="py-3.5 px-4">Total Weight</th>
                             <th class="py-3.5 px-4">Track Gradient</th>
@@ -101,8 +89,9 @@
                     const typeLabel = item.engine_type === 0 ? "ELECTRIC" : "DIESEL";
                     const typeClass = item.engine_type === 0 ? "text-emerald-400" : "text-blue-400";
                     
-                    const totalStr = item.engine_type === 0 ? `${item.pred_total_kwh} kWh` : `${item.pred_total_liters} L`;
-                    const rateStr = item.engine_type === 0 ? `${item.pred_kwh_per_hour} kW/h` : `${item.pred_liters_per_hour} L/h`;
+                    // FIX: Replaced outdated item.pred_ prefixes with direct backend keys
+                    const totalStr = item.engine_type === 0 ? `${item.total_kwh ?? '0.00'} kWh` : `${item.total_liters ?? '0.00'} L`;
+                    const rateStr = item.engine_type === 0 ? `${item.kwh_per_hour ?? '0.00'} kW/h` : `${item.liters_per_hour ?? '0.00'} L/h`;
 
                     tbody.innerHTML += `
                         <tr class="border-b border-slate-800 hover:bg-slate-900/50 transition">

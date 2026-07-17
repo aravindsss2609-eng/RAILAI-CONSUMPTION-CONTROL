@@ -49,15 +49,21 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
                 <span class="text-slate-500 block uppercase tracking-wider font-bold">ACTIVE PROPULSION CLASS</span>
-                <span id="state-type" class="text-lg font-extrabold text-slate-200 block mt-1">---</span>
+                <span id="state-type" class="text-lg font-extrabold text-slate-200 block mt-1">
+                    {% if system_state.engine_type == 0 %}ELECTRIC PANTOGRAPH TRACTION{% else %}DIESEL-ELECTRIC INTERNAL COMBUSTION{% endif %}
+                </span>
             </div>
             <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
                 <span class="text-slate-500 block uppercase tracking-wider font-bold">TOTAL CONSUMED VOLUME</span>
-                <span id="state-total" class="text-xl font-black text-emerald-400 block mt-1">---</span>
+                <span id="state-total" class="text-xl font-black text-emerald-400 block mt-1">
+                    {% if system_state.engine_type == 0 %}{{ system_state.total_kwh }} kWh{% else %}{{ system_state.total_liters }} Liters{% endif %}
+                </span>
             </div>
             <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
                 <span class="text-slate-500 block uppercase tracking-wider font-bold">REAL-TIME HOURLY BURN RATE</span>
-                <span id="state-rate" class="text-xl font-black text-blue-400 block mt-1">---</span>
+                <span id="state-rate" class="text-xl font-black text-blue-400 block mt-1">
+                    {% if system_state.engine_type == 0 %}{{ system_state.kwh_per_hour }} kW/h{% else %}{{ system_state.liters_per_hour }} L/h{% endif %}
+                </span>
             </div>
         </div>
 
@@ -77,19 +83,19 @@
                     <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
                         <div class="flex justify-between border-b border-slate-900 pb-1.5">
                             <span class="text-slate-500">Speed Velocity:</span>
-                            <span id="lbl-speed" class="text-slate-300 font-bold">---</span>
+                            <span id="lbl-speed" class="text-slate-300 font-bold">{{ system_state.speed }} km/h</span>
                         </div>
                         <div class="flex justify-between border-b border-slate-900 pb-1.5">
                             <span class="text-slate-500">Gross Mass Load:</span>
-                            <span id="lbl-weight" class="text-slate-300 font-bold">---</span>
+                            <span id="lbl-weight" class="text-slate-300 font-bold">{{ system_state.weight }} Tons</span>
                         </div>
                         <div class="flex justify-between border-b border-slate-900 pb-1.5">
                             <span class="text-slate-500">Track Incline Gradient:</span>
-                            <span id="lbl-gradient" class="text-slate-300 font-bold">---</span>
+                            <span id="lbl-gradient" class="text-slate-300 font-bold">{{ system_state.gradient }} %</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">Segment Distance:</span>
-                            <span id="lbl-distance" class="text-slate-300 font-bold">---</span>
+                            <span id="lbl-distance" class="text-slate-300 font-bold">{{ system_state.distance }} km</span>
                         </div>
                     </div>
                 </div>
@@ -190,19 +196,20 @@
 
                 let targetedHourlyBurnRate = 0;
 
+                // FIX: Aligned with updated dictionary keys received directly from backend payload
                 if (s.engine_type == 0) {
                     // Electric Mode Configuration Mapping
                     document.getElementById('state-type').innerText = "ELECTRIC PANTOGRAPH TRACTION";
-                    document.getElementById('state-total').innerText = s.pred_total_kwh + " kWh";
-                    document.getElementById('state-rate').innerText = s.pred_kwh_per_hour + " kW/h";
-                    targetedHourlyBurnRate = s.pred_kwh_per_hour;
+                    document.getElementById('state-total').innerText = (s.total_kwh ?? '0.00') + " kWh";
+                    document.getElementById('state-rate').innerText = (s.kwh_per_hour ?? '0.00') + " kW/h";
+                    targetedHourlyBurnRate = parseFloat(s.kwh_per_hour ?? 0);
                     currentUnitLabel = "kW/h (Electric)";
                 } else {
                     // Diesel Combustion Mode Configuration Mapping
                     document.getElementById('state-type').innerText = "DIESEL-ELECTRIC INTERNAL COMBUSTION";
-                    document.getElementById('state-total').innerText = s.pred_total_liters + " Liters";
-                    document.getElementById('state-rate').innerText = s.pred_liters_per_hour + " L/h";
-                    targetedHourlyBurnRate = s.pred_liters_per_hour;
+                    document.getElementById('state-total').innerText = (s.total_liters ?? '0.00') + " Liters";
+                    document.getElementById('state-rate').innerText = (s.liters_per_hour ?? '0.00') + " L/h";
+                    targetedHourlyBurnRate = parseFloat(s.liters_per_hour ?? 0);
                     currentUnitLabel = "L/h (Diesel)";
                 }
 
