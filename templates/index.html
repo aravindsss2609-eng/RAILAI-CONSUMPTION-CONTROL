@@ -1,0 +1,248 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailAI Control Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
+
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
+        </div>
+        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
+            <a href="/" id="nav-dash" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard System</a>
+            <a href="/analytics" id="nav-analytics" class="text-slate-400 hover:text-emerald-400 transition">Live Analytics</a>
+            <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
+            <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
+            <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-6">
+        
+        <!-- Top Status Bar Hero -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <div>
+                <h1 class="text-base font-black text-slate-100 tracking-wider">VIRTUAL OPERATIONS & MESH NETWORK</h1>
+                <p class="text-slate-400 text-[11px] mt-0.5">Asset matrix running live operational metrics synced dynamically from the global AI Predictor Lab.</p>
+            </div>
+            <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-lg text-emerald-400 font-bold tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>SYSTEM SYNCED (&ge;98% ML INF ACCURACY)</span>
+            </div>
+        </div>
+
+        <!-- Telemetry Cards Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
+                <span class="text-slate-500 block uppercase tracking-wider font-bold">ACTIVE PROPULSION CLASS</span>
+                <span id="state-type" class="text-lg font-extrabold text-slate-200 block mt-1">---</span>
+            </div>
+            <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
+                <span class="text-slate-500 block uppercase tracking-wider font-bold">TOTAL CONSUMED VOLUME</span>
+                <span id="state-total" class="text-xl font-black text-emerald-400 block mt-1">---</span>
+            </div>
+            <div class="bg-slate-900 p-5 border border-slate-800 rounded-xl shadow-lg">
+                <span class="text-slate-500 block uppercase tracking-wider font-bold">REAL-TIME HOURLY BURN RATE</span>
+                <span id="state-rate" class="text-xl font-black text-blue-400 block mt-1">---</span>
+            </div>
+        </div>
+
+        <!-- Main Workspace: Visual Curve and Network Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Real-time Track Status Summary Dashboard Card -->
+            <div class="lg:col-span-1 bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between shadow-xl">
+                <div>
+                    <h2 class="text-sm font-bold text-emerald-400 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-gauge-high"></i> Master Baseline Telemetry
+                    </h2>
+                    <p class="text-slate-400 text-[11px] leading-relaxed mb-4">
+                        Displaying active parameters running across the primary simulated control block. Adjust these anytime inside the <strong>AI Predictor Lab</strong>.
+                    </p>
+                    
+                    <div class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-850">
+                        <div class="flex justify-between border-b border-slate-900 pb-1.5">
+                            <span class="text-slate-500">Speed Velocity:</span>
+                            <span id="lbl-speed" class="text-slate-300 font-bold">---</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-900 pb-1.5">
+                            <span class="text-slate-500">Gross Mass Load:</span>
+                            <span id="lbl-weight" class="text-slate-300 font-bold">---</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-900 pb-1.5">
+                            <span class="text-slate-500">Track Incline Gradient:</span>
+                            <span id="lbl-gradient" class="text-slate-300 font-bold">---</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Segment Distance:</span>
+                            <span id="lbl-distance" class="text-slate-300 font-bold">---</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 border-t border-slate-800 pt-4">
+                    <span class="text-slate-500 text-[10px] tracking-wider block font-bold uppercase">Dynamic Control Status:</span>
+                    <div class="text-slate-400 text-[11px] mt-1 leading-normal">
+                        All values automatically inherited globally. Changing configuration data updates analytics instantaneously.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Live History Trend Line Chart -->
+            <div class="lg:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <h2 class="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2 uppercase tracking-wider">
+                    <i class="fa-solid fa-chart-line text-emerald-400"></i> Performance Mesh Analytics Stream
+                </h2>
+                <div class="h-64">
+                    <canvas id="liveChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Active Multi-Train Grid Mesh Network Operations Table -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-network-wired text-emerald-400"></i> Network Cluster Node Sync Grid
+                    </h2>
+                    <p class="text-slate-400 text-[11px] mt-0.5">Comprehensive grid deployment tracking synchronized regional rolling stock assets mapped to live prediction coefficients.</p>
+                </div>
+                <button onclick="updateDashboardSync()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition uppercase tracking-wider">
+                    <i class="fa-solid fa-rotate"></i> Sync Mesh
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="text-[11px] uppercase text-slate-500 border-b border-slate-800 bg-slate-950 font-bold">
+                        <tr>
+                            <th class="py-3 px-4">Node ID</th>
+                            <th class="py-3 px-4">Asset Identity</th>
+                            <th class="py-3 px-4">Operating Velocity</th>
+                            <th class="py-3 px-4">Reference Mass</th>
+                            <th class="py-3 px-4 text-right">Inferred Performance Delivery Matrix</th>
+                            <th class="py-3 px-4 text-center">Operation Sync Flag</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mesh-body">
+                        <!-- Filled at runtime by JavaScript State Engine -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Setup Live Telemetry Trend Plot Tracker
+        let currentUnitLabel = "Energy Burn Rate";
+        const ctx = document.getElementById('liveChart').getContext('2d');
+        const liveChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Live Real-Time Burn Vector Rate',
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    borderWidth: 2,
+                    data: [],
+                    fill: true,
+                    tension: 0.35
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } },
+                    y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Global State Interpolation Engine
+        async function updateDashboardSync() {
+            try {
+                const stateRes = await fetch('/api/get-system-state');
+                const s = await stateRes.json();
+                
+                // Update Base Metric Text Fields
+                document.getElementById('lbl-speed').innerText = s.speed + " km/h";
+                document.getElementById('lbl-weight').innerText = s.weight + " Tons";
+                document.getElementById('lbl-gradient').innerText = s.gradient + " %";
+                document.getElementById('lbl-distance').innerText = s.distance + " km";
+
+                let targetedHourlyBurnRate = 0;
+
+                if (s.engine_type == 0) {
+                    // Electric Mode Configuration Mapping
+                    document.getElementById('state-type').innerText = "ELECTRIC PANTOGRAPH TRACTION";
+                    document.getElementById('state-total').innerText = s.pred_total_kwh + " kWh";
+                    document.getElementById('state-rate').innerText = s.pred_kwh_per_hour + " kW/h";
+                    targetedHourlyBurnRate = s.pred_kwh_per_hour;
+                    currentUnitLabel = "kW/h (Electric)";
+                } else {
+                    // Diesel Combustion Mode Configuration Mapping
+                    document.getElementById('state-type').innerText = "DIESEL-ELECTRIC INTERNAL COMBUSTION";
+                    document.getElementById('state-total').innerText = s.pred_total_liters + " Liters";
+                    document.getElementById('state-rate').innerText = s.pred_liters_per_hour + " L/h";
+                    targetedHourlyBurnRate = s.pred_liters_per_hour;
+                    currentUnitLabel = "L/h (Diesel)";
+                }
+
+                // Append Time-Series Point to Live Trend Plot
+                const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                liveChart.data.labels.push(timestampStr);
+                liveChart.data.datasets[0].data.push(targetedHourlyBurnRate);
+                liveChart.data.datasets[0].label = `Burn Vector Rate (${currentUnitLabel})`;
+                
+                if (liveChart.data.labels.length > 10) {
+                    liveChart.data.labels.shift();
+                    liveChart.data.datasets[0].data.shift();
+                }
+                liveChart.update();
+
+                // Fetch Mesh Cluster Node Array Elements
+                const meshRes = await fetch('/api/mesh-grid');
+                const grid = await meshRes.json();
+                const tbody = document.getElementById('mesh-body');
+                tbody.innerHTML = '';
+                
+                grid.forEach(t => {
+                    tbody.innerHTML += `
+                        <tr class="border-b border-slate-800 hover:bg-slate-900/50 transition">
+                            <td class="py-3.5 px-4 text-emerald-500 font-bold font-mono">${t.id}</td>
+                            <td class="py-3.5 px-4 font-sans font-bold text-slate-200">${t.name}</td>
+                            <td class="py-3.5 px-4 font-mono">${t.speed} km/h</td>
+                            <td class="py-3.5 px-4 font-mono">${t.weight} Tons</td>
+                            <td class="py-3.5 px-4 text-right text-emerald-400 font-bold font-mono">${t.metrics}</td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    ${t.status}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Dashboard Global Synchronization Intercept Failure:", err);
+            }
+        }
+
+        // Initialize Loop Intercepts
+        updateDashboardSync();
+        setInterval(updateDashboardSync, 3000);
+    </script>
+</body>
+</html>

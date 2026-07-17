@@ -1,0 +1,200 @@
+<!-- templates/analytics.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Analytics Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
+
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
+        </div>
+        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
+            <a href="/" id="nav-dash" class="text-slate-400 hover:text-emerald-400 transition">Dashboard System</a>
+            <a href="/analytics" id="nav-analytics" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Live Analytics</a>
+            <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
+            <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
+            <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-6">
+        
+        <!-- Header Hero -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <div>
+                <h1 class="text-base font-black text-slate-100 tracking-wider">LIVE TELEMETRY DIAGNOSTIC MATRIX</h1>
+                <p class="text-slate-400 text-[11px] mt-0.5">Comprehensive telemetry extraction showcasing all 20 advanced dynamic calculation layers.</p>
+            </div>
+            <div class="bg-emerald-500/10 border border-emerald-500/30 px-4 py-2 rounded-lg text-emerald-400 font-bold flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span id="engine-mode-tag">LOADING ARCHETYPE</span>
+            </div>
+        </div>
+
+        <!-- Telemetry Breakdown Sub-Grids -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Column 1: Core Kinematics -->
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-mountain-sun"></i> Kinematics & Track
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Velocity Speed:</span>
+                        <span id="val-speed" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Gross Mass Load:</span>
+                        <span id="val-weight" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Track Gradient:</span>
+                        <span id="val-gradient" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Total Distance:</span>
+                        <span id="val-distance" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Passenger Count:</span>
+                        <span id="val-passengers" class="text-slate-200 font-bold">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 2: Aerodynamics & External Variables -->
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-wind"></i> Aero & Environment
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Ambient Temperature:</span>
+                        <span id="val-temp" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Headwind Vector:</span>
+                        <span id="val-headwind" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Drag Coeff (Cd):</span>
+                        <span id="val-drag" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Rolling Res. (Crrm):</span>
+                        <span id="val-rolling" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Adhesion Fraction:</span>
+                        <span id="val-adhesion" class="text-slate-200 font-bold">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Column 3: Powertrain Modifiers -->
+            <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                <h2 class="text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-gears"></i> Powertrain & Systems
+                </h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Auxiliary HVAC Load:</span>
+                        <span id="val-aux" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Inverter Efficiency:</span>
+                        <span id="val-inverter" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Gearbox Ratio:</span>
+                        <span id="val-gear" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-950 pb-2">
+                        <span class="text-slate-500">Wheel Mapped Diam:</span>
+                        <span id="val-wheel" class="text-slate-200 font-bold">---</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Motor Frequency:</span>
+                        <span id="val-motor" class="text-slate-200 font-bold">---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Inferred Deliverables Footer Section -->
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
+                <span class="text-slate-500 font-bold block">PNEUMATIC BRAKE BASE</span>
+                <span id="val-brake" class="text-base font-black text-slate-200 mt-1 block">---</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
+                <span class="text-slate-500 font-bold block">REGEN FACTOR</span>
+                <span id="val-regen" class="text-base font-black text-emerald-400 mt-1 block">---</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
+                <span class="text-slate-500 font-bold block">TOTAL ENERGY PAYLOAD</span>
+                <span id="val-pred-total" class="text-base font-black text-emerald-400 mt-1 block">---</span>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-850">
+                <span class="text-slate-500 font-bold block">CALCULATED HOURLY BURN RATE</span>
+                <span id="val-pred-rate" class="text-base font-black text-blue-400 mt-1 block">---</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function fetchAnalyticsState() {
+            try {
+                const res = await fetch('/api/get-system-state');
+                const s = await res.json();
+
+                // Assign Inputs 
+                document.getElementById('val-speed').innerText = s.speed + " km/h";
+                document.getElementById('val-weight').innerText = s.weight + " Tons";
+                document.getElementById('val-gradient').innerText = s.gradient + " %";
+                document.getElementById('val-distance').innerText = s.distance + " km";
+                document.getElementById('val-passengers').innerText = s.passengers;
+                
+                document.getElementById('val-temp').innerText = s.temp + " °C";
+                document.getElementById('val-headwind').innerText = s.headwind + " km/h";
+                document.getElementById('val-drag').innerText = s.drag_coeff;
+                document.getElementById('val-rolling').innerText = s.rolling_res;
+                document.getElementById('val-adhesion').innerText = s.adhesion;
+
+                document.getElementById('val-aux').innerText = s.aux_load + " kW";
+                document.getElementById('val-inverter').innerText = s.inverter_eff + " %";
+                document.getElementById('val-gear').innerText = s.gear_ratio;
+                document.getElementById('val-wheel').innerText = s.wheel_diam + " mm";
+                document.getElementById('val-motor').innerText = s.motor_freq + " Hz";
+                document.getElementById('val-brake').innerText = s.brake_pressure + " kPa";
+                document.getElementById('val-regen').innerText = Math.round(s.regen * 100) + " %";
+
+                // Swap dynamic outputs depending on Engine Architecture Selection
+                if(s.engine_type == 0) {
+                    document.getElementById('engine-mode-tag').innerText = "ARCHETYPE: ELECTRIC TRACTION";
+                    document.getElementById('val-pred-total').innerText = s.pred_total_kwh + " kWh";
+                    document.getElementById('val-pred-rate').innerText = s.pred_kwh_per_hour + " kW/h";
+                } else {
+                    document.getElementById('engine-mode-tag').innerText = "ARCHETYPE: DIESEL COMBUSTION";
+                    document.getElementById('val-pred-total').innerText = s.pred_total_liters + " Liters";
+                    document.getElementById('val-pred-rate').innerText = s.pred_liters_per_hour + " L/h";
+                }
+            } catch (e) {
+                console.error("Failed to sync analytical diagnostic variables:", e);
+            }
+        }
+        
+        fetchAnalyticsState();
+        setInterval(fetchAnalyticsState, 3000);
+    </script>
+</body>
+</html>

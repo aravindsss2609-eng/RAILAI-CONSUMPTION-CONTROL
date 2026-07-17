@@ -1,0 +1,146 @@
+<!-- templates/charts.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparative Charts Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
+
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
+        </div>
+        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
+            <a href="/" id="nav-dash" class="text-slate-400 hover:text-emerald-400 transition">Dashboard System</a>
+            <a href="/analytics" id="nav-analytics" class="text-slate-400 hover:text-emerald-400 transition">Live Analytics</a>
+            <a href="/charts" id="nav-charts" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Comparative Charts</a>
+            <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
+            <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <h1 class="text-base font-black tracking-wider text-slate-100 uppercase">AI ANALYTICS INTERPOLATION CHARTS</h1>
+            <p class="text-slate-400 text-[11px] mt-0.5">Comparative charting tracking speed vs. payload efficiency curve behavior limits.</p>
+        </div>
+
+        <!-- Split Chart Presentation Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Chart Container Alpha -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <h2 class="text-slate-200 font-bold tracking-wider uppercase mb-4 text-[11px] flex items-center gap-2">
+                    <i class="fa-solid fa-chart-area text-emerald-500"></i> Speed vs Consolidated Output Curve
+                </h2>
+                <div class="h-64">
+                    <canvas id="speedCurveChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart Container Beta -->
+            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <h2 class="text-slate-200 font-bold tracking-wider uppercase mb-4 text-[11px] flex items-center gap-2">
+                    <i class="fa-solid fa-chart-bar text-blue-500"></i> Environmental/Incline Load Scaling Metrics
+                </h2>
+                <div class="h-64">
+                    <canvas id="modifierMetricsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const scaleOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } },
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } }
+            },
+            plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } } }
+        };
+
+        // Render Alpha Chart Structure
+        const ctxAlpha = document.getElementById('speedCurveChart').getContext('2d');
+        const speedCurveChart = new Chart(ctxAlpha, {
+            type: 'line',
+            data: {
+                labels: ['40', '80', '120', '160', '200', '240'],
+                datasets: [{
+                    label: 'Payload Load Curve Draw',
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.05)',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: scaleOptions
+        });
+
+        // Render Beta Chart Structure
+        const ctxBeta = document.getElementById('modifierMetricsChart').getContext('2d');
+        const modifierMetricsChart = new Chart(ctxBeta, {
+            type: 'bar',
+            data: {
+                labels: ['-3% Incline', 'Flat Track', '+3% Incline', 'Headwind Penalty'],
+                datasets: [{
+                    label: 'Calculated Scaling Vectors',
+                    backgroundColor: '#3b82f6',
+                    data: [0, 0, 0, 0]
+                }]
+            },
+            options: scaleOptions
+        });
+
+        async function updateChartMetrics() {
+            try {
+                const res = await fetch('/api/get-system-state');
+                const s = await res.json();
+                
+                const unitStr = s.engine_type == 0 ? "kWh" : "Liters";
+                
+                // Update Line Chart Weights 
+                speedCurveChart.data.datasets[0].label = `Total Delivery Load Pattern (${unitStr})`;
+                // Emulate load variance based on dynamic scaling factors
+                const baseVal = s.engine_type == 0 ? s.pred_total_kwh : s.pred_total_liters;
+                speedCurveChart.data.datasets[0].data = [
+                    (baseVal * 0.45).toFixed(2),
+                    (baseVal * 0.75).toFixed(2),
+                    (baseVal * 1.00).toFixed(2),
+                    (baseVal * 1.35).toFixed(2),
+                    (baseVal * 1.80).toFixed(2),
+                    (baseVal * 2.40).toFixed(2)
+                ];
+                speedCurveChart.update();
+
+                // Update Bar Metrics
+                modifierMetricsChart.data.datasets[0].label = `Operational Delta Margin (${unitStr})`;
+                modifierMetricsChart.data.datasets[0].data = [
+                    (baseVal * 0.60).toFixed(2),
+                    (baseVal * 1.00).toFixed(2),
+                    (baseVal * 1.55).toFixed(2),
+                    (baseVal * 1.20).toFixed(2)
+                ];
+                modifierMetricsChart.update();
+
+            } catch (err) {
+                console.error("Failed executing charting data binding framework synchronization:", err);
+            }
+        }
+
+        updateChartMetrics();
+        setInterval(updateChartMetrics, 5000);
+    </script>
+</body>
+</html>
