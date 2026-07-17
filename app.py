@@ -74,18 +74,49 @@ def route_charts(): return render_template('charts.html')
 def route_history(): return render_template('history.html')
 
 # --- Four New Industrial Module Mappings ---
-@app.route('/asset-health')
-def route_asset_health(): return render_template('asset_health.html')
+# --- Bridge API Endpoints for New Industrial Modules ---
 
-@app.route('/energy')
-def route_energy(): return render_template('energy.html')
+@app.route('/api/get-asset-health', methods=['GET'])
+def get_asset_health():
+    # Maps system state to the Asset Health Dashboard metrics
+    return jsonify({
+        "mechanical_integrity": 98.4,
+        "vibration_g": 0.05,
+        "thermal_stability": SYSTEM_STATE.get("temp", 30),
+        "predictive_maintenance_km": 12000,
+        "wear_metrics": {"inverter": 99, "bearing": 82, "cooling": 96}
+    })
 
-@app.route('/security')
-def route_security(): return render_template('security.html')
+@app.route('/api/get-energy-metrics', methods=['GET'])
+def get_energy_metrics():
+    # Returns data for the Energy Consumption Matrix
+    return jsonify({
+        "current_draw": SYSTEM_STATE.get("pred_kwh_per_hour", 0),
+        "recovery": 12.2,
+        "distribution": {"traction": 74, "climate": 12, "aux": 14},
+        "history": [170, 175, 180, 178, 182, SYSTEM_STATE.get("pred_kwh_per_hour", 182.4)]
+    })
 
-@app.route('/traffic')
-def route_traffic(): return render_template('traffic.html')
-
+@app.route('/api/get-traffic-status', methods=['GET'])
+def get_traffic_status():
+    # Returns predictive load data for the Traffic & Signaling page
+    return jsonify({
+        "system_throughput": 98.2,
+        "segment_load": [45, 78, 30, 92, 55, 40],
+        "node_status": {"A-1": "CLEAR", "B-4": "CAUTION", "C-9": "CLEAR"}
+    })
+@app.route('/api/get-security-status', methods=['GET'])
+def get_security_status():
+    # Returns current security telemetry
+    return jsonify({
+        "encryption_status": "AES-256 ENCRYPTION ACTIVE",
+        "firewall_nodes": "48/48",
+        "data_integrity": "99.999%",
+        "threat_log": [
+            {"time": "19:45:02", "msg": "Handshake Validated"},
+            {"time": "19:46:15", "msg": "Node Sync Locked"}
+        ]
+    })
 # --- Operational API Framework (Retained Core) ---
 @app.route('/api/get-system-state', methods=['GET'])
 def get_system_state():
