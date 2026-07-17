@@ -2,21 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Security - RailAI</title>
+    <title>Security Command - RailAI Industrial</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-300">
-    <main class="p-8">
-        <h1 class="text-3xl font-black text-white mb-6">Security & Perimeter</h1>
-        <div class="grid grid-cols-1 gap-4">
-            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg flex items-center justify-between">
-                <div>
-                    <h3 class="font-bold text-white">System Perimeter</h3>
-                    <p class="text-sm">Encryption: AES-256 Validated</p>
+<body class="bg-slate-950 text-slate-300 font-mono">
+    <!-- Required for navigation injection -->
+    <nav></nav>
+
+    <main class="p-8 max-w-7xl mx-auto">
+        <div class="mb-8">
+            <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Security & Perimeter</h1>
+            <p class="text-rose-500 text-xs font-bold uppercase mt-1 tracking-widest">Global Network Integrity: Active Monitoring</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Main Perimeter Status -->
+            <div class="lg:col-span-2 bg-slate-900 p-8 border border-slate-800 rounded-lg shadow-xl">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <p class="text-slate-500 text-[10px] uppercase font-bold">System Perimeter Status</p>
+                        <p class="text-2xl font-black text-white mt-1">AES-256 ENCRYPTION ACTIVE</p>
+                    </div>
+                    <div class="bg-emerald-500/10 border border-emerald-500 px-3 py-1 rounded">
+                        <span class="text-emerald-400 font-bold text-[10px]">SECURED</span>
+                    </div>
                 </div>
-                <span class="text-emerald-500 font-bold px-3 py-1 bg-emerald-500/10 rounded">SECURED</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded text-center">
+                        <p class="text-[10px] text-slate-500 uppercase">Firewall Nodes</p>
+                        <p class="font-bold text-white">48/48 ACTIVE</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 border border-slate-800 rounded text-center">
+                        <p class="text-[10px] text-slate-500 uppercase">Data Integrity</p>
+                        <p class="font-bold text-white">99.999% VALIDATED</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Threat Detection Feed -->
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+                    <i class="fa-solid fa-shield-halved mr-2"></i> Threat Log
+                </h3>
+                <div id="threat-log" class="space-y-3 text-[10px]">
+                    <div class="flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-check"></i> 19:45:02 - Handshake Validated</div>
+                    <div class="flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-check"></i> 19:46:15 - Node Sync Locked</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perimeter Map Visualization -->
+        <div class="mt-6 bg-slate-900 p-6 border border-slate-800 rounded-lg flex items-center justify-between">
+            <p class="text-xs font-bold text-slate-400 uppercase">Perimeter Defense Field: <span class="text-white">Full Coverage Online</span></p>
+            <div class="flex gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-75"></div>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-150"></div>
             </div>
         </div>
     </main>
+
+    <script>
+        // Simulate Real-time Threat Log Activity
+        setInterval(() => {
+            const log = document.getElementById('threat-log');
+            const newEntry = document.createElement('div');
+            newEntry.className = "flex items-center gap-2 text-emerald-400";
+            newEntry.innerHTML = `<i class="fa-solid fa-check"></i> ${new Date().toLocaleTimeString()} - Packet Validated`;
+            log.prepend(newEntry);
+            if (log.children.length > 5) log.removeChild(log.lastElementChild);
+        }, 5000);
+    </script>
 </body>
 </html>

@@ -2,27 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Asset Health - RailAI</title>
+    <title>Asset Health - RailAI Industrial</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-slate-950 text-slate-300">
-    <main class="p-8">
-        <h1 class="text-3xl font-black text-white mb-6">Asset Health Diagnostics</h1>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg">
-                <h3 class="text-emerald-500 font-bold mb-2">Mechanical Integrity</h3>
-                <p class="text-4xl font-mono">98.4%</p>
+<body class="bg-slate-950 text-slate-300 font-mono">
+    <!-- Required for navigation injection -->
+    <nav>
+      <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
+            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
+            <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
+            <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
+            <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
+            <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
+            <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
+            <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
+            <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
+        </div>
+    </nav>
+
+    <main class="p-8 max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Asset Health Diagnostics</h1>
+                <p class="text-emerald-500 text-xs font-bold uppercase mt-1">Live Telemetry: Sensor Array Alpha-7</p>
             </div>
-            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg">
-                <h3 class="text-emerald-500 font-bold mb-2">Vibration Index</h3>
-                <p class="text-4xl font-mono">0.04g</p>
+            <div id="health-status" class="px-4 py-2 bg-emerald-500/10 border border-emerald-500 text-emerald-400 font-bold rounded text-sm">
+                SYSTEM OPERATIONAL
             </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Dynamic KPI Cards -->
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
+                <p class="text-slate-500 text-[10px] uppercase font-bold">Mechanical Integrity</p>
+                <p class="text-3xl font-black text-white mt-2" id="kpi-mech">98.4%</p>
+            </div>
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
+                <p class="text-slate-500 text-[10px] uppercase font-bold">Vibration (G-Force)</p>
+                <p class="text-3xl font-black text-white mt-2" id="kpi-vib">0.04g</p>
+            </div>
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
+                <p class="text-slate-500 text-[10px] uppercase font-bold">Thermal Stability</p>
+                <p class="text-3xl font-black text-white mt-2" id="kpi-thermal">42°C</p>
+            </div>
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
+                <p class="text-slate-500 text-[10px] uppercase font-bold">Predictive Maintenance</p>
+                <p class="text-3xl font-black text-white mt-2" id="kpi-maint">12k KM</p>
+            </div>
+        </div>
+
+        <!-- Detailed Component Grid -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg">
-                <h3 class="text-emerald-500 font-bold mb-2">Service Interval</h3>
-                <p class="text-4xl font-mono">12k KM</p>
+                <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-widest"><i class="fa-solid fa-microchip mr-2"></i> Component Wear Analysis</h3>
+                <div class="space-y-4 text-xs">
+                    <div>
+                        <div class="flex justify-between mb-1"><span>Inverter Module</span><span class="text-emerald-400">99%</span></div>
+                        <div class="h-2 bg-slate-800 rounded-full"><div class="h-full bg-emerald-500 w-[99%] rounded-full"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1"><span>Bearing Assembly</span><span class="text-amber-400">82%</span></div>
+                        <div class="h-2 bg-slate-800 rounded-full"><div class="h-full bg-amber-500 w-[82%] rounded-full"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1"><span>Cooling Circuit</span><span class="text-emerald-400">96%</span></div>
+                        <div class="h-2 bg-slate-800 rounded-full"><div class="h-full bg-emerald-500 w-[96%] rounded-full"></div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg text-center flex flex-col items-center">
+                <h3 class="font-bold text-white mb-4 uppercase text-xs tracking-widest self-start">Operational Health Score</h3>
+                <div class="w-40 h-40">
+                    <canvas id="healthRadar"></canvas>
+                </div>
             </div>
         </div>
     </main>
+
+    <script>
+        // Radar Chart Initialization
+        const ctx = document.getElementById('healthRadar').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Mech', 'Thermal', 'Elec', 'Vib', 'Load'],
+                datasets: [{ data: [98, 92, 99, 95, 88], backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10b981' }]
+            },
+            options: { scales: { r: { grid: { color: '#334155' }, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+        });
+
+        // Industrial Simulation Loop
+        setInterval(() => {
+            document.getElementById('kpi-vib').innerText = (0.04 + (Math.random() * 0.01)).toFixed(2) + "g";
+            document.getElementById('kpi-thermal').innerText = (42 + Math.floor(Math.random() * 3)) + "°C";
+        }, 2000);
+    </script>
 </body>
 </html>
