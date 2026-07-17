@@ -66,7 +66,7 @@ def calculate_physics_power_vectorized(X):
     
     # 3. Aerodynamic Drag Force (Frontal area of typical high-speed train ~ 11.0 m²)
     frontal_area = 11.0 
-    air_density = 1.225 * (273.15 / (273.15 + temp)) # Temperature-dependent density
+    air_density = 1.225 * (273.15 / (273.15 + temp)) 
     F_drag = 0.5 * air_density * drag_coeff * frontal_area * (v_rel ** 2)
     
     # Total Tractive Force at wheel level
@@ -96,9 +96,8 @@ def calculate_physics_power_vectorized(X):
 
 class PhysicsInformedEstimator:
     """
-    Standard sklearn-compatible wrapper. Uses an optimized RF model 
-    operating on physical features to predict the calibrated consumption rate, 
-    and handles exact deterministic totals calculation internally.
+    Standard sklearn-compatible wrapper. Handles exact deterministic totals calculation 
+    internally and formats values cleanly back to the caller application context.
     """
     def __init__(self, rate_model, return_total=False):
         self.rate_model = rate_model
@@ -127,9 +126,10 @@ class PhysicsInformedEstimator:
             distance = X_arr[:, 4]
                 
             travel_time_hours = np.where(speed > 0, distance / speed, 0)
-            return predicted_rate * travel_time_hours
+            result = predicted_rate * travel_time_hours
+            return result[0] if result.ndim > 0 and len(result) == 1 else result
         
-        return predicted_rate
+        return predicted_rate[0] if predicted_rate.ndim > 0 and len(predicted_rate) == 1 else predicted_rate
 
 
 def train_system_estimators():
@@ -168,22 +168,18 @@ def train_system_estimators():
         
         # Calculate physics power for target split
         X_sub_phys = calculate_physics_power_vectorized(X_sub)
-        
-        # Build raw array matrix to guarantee seamless array interface compatibility with app.py
         X_sub_augmented = np.column_stack((X_sub.values, X_sub_phys))
         
-        # Split features
         X_train, X_test, y_train, y_test = train_test_split(
             X_sub_augmented, y_rate, test_size=0.15, random_state=42
         )
         
-        # Industry-grade hyperparameter optimization tuning (>99% R² Target Output)
         regressor = RandomForestRegressor(
-            n_estimators=150,            # High tree density ensures smooth estimator surface variance
-            max_depth=22,                # Deep context capture eliminates un-modeled system noise
+            n_estimators=150,
+            max_depth=22,
             min_samples_split=2,
             min_samples_leaf=1,
-            max_features=0.8,            # Changed from 'sqrt' to 80% to ensure physics vector is heavily utilized
+            max_features=0.8,
             bootstrap=True,
             random_state=42,
             n_jobs=-1
@@ -196,14 +192,13 @@ def train_system_estimators():
         r2 = r2_score(y_test, predictions_rate)
         print(f"[{mode.upper()} ENERGY RATE MODEL] R² Target Accuracy: {r2*100:.3f}%")
         
-        # Save wrappers mimicking independent scikit-learn models to avoid changing any API code
         final_serialized_models[meta['rate_col']] = PhysicsInformedEstimator(regressor, return_total=False)
         final_serialized_models[meta['total_col']] = PhysicsInformedEstimator(regressor, return_total=True)
 
     # Save to disk
     with open('rail_ai_models.pkl', 'wb') as f:
         pickle.dump(final_serialized_models, f)
-    print("\n[SUCCESS] 98%+ Accuracy Physics-Informed estimators saved to rail_ai_models.pkl")
+    print("\n[SUCCESS] Physics-Informed estimators saved to rail_ai_models.pkl")
 
 if __name__ == "__main__":
     train_system_estimators()
