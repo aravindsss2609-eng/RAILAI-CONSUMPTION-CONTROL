@@ -10,13 +10,14 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
 
-     <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Unified Telemetry Navigation Mesh Network Routing -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col xl:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-3">
-            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
             <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
         </div>
         <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
-            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
+            <a href="/" class="text-slate-400 hover:text-emerald-400 transition">Dashboard</a>
             <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
             <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
             <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
@@ -25,22 +26,7 @@
             <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
             <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
             <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
-            <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
-        </div>
-    </nav>
-
-    <!-- Navigation Header -->
-    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
-        </div>
-        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
-            <a href="/" id="nav-dash" class="text-slate-400 hover:text-emerald-400 transition">Dashboard System</a>
-            <a href="/analytics" id="nav-analytics" class="text-slate-400 hover:text-emerald-400 transition">Live Analytics</a>
-            <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
-            <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
-            <a href="/predict_page" id="nav-predict" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">AI Predictor Laboratory</a>
+            <a href="/predict_page" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">AI Lab</a>
         </div>
     </nav>
 
@@ -181,7 +167,7 @@
             </div>
 
             <!-- Right Sidebar Panel: Actions and Live Outputs -->
-            <div class="lg:col-span-1 space-y-6 flex flex-col justify-between">
+            <div class="lg:col-span-1 space-y-6 flex flex-col justify-start">
                 
                 <!-- Prediction Actions Card -->
                 <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
@@ -191,26 +177,25 @@
                     <p class="text-slate-400 text-[11px] leading-normal">
                         Submit parameters to compute a telemetry payload via the Random Forest inference framework and commit the metrics across the fleet mesh network.
                     </p>
-                    
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 tracking-wider uppercase font-mono shadow-md">
                         <i class="fa-solid fa-calculator"></i> Run ML Inference
                     </button>
                 </div>
 
                 <!-- Simulation Output Panel Display -->
-                <div id="resultsCard" class="hidden bg-slate-900 p-6 rounded-2xl border border-emerald-500/20 shadow-xl flex-1 flex flex-col justify-center items-center text-center mt-6 lg:mt-0 min-h-[220px]">
+                <div id="resultsCard" class="hidden bg-slate-900 p-6 rounded-2xl border border-emerald-500/20 shadow-xl flex flex-col justify-center items-center text-center min-h-[220px]">
                     <span class="text-slate-500 text-[10px] tracking-widest font-bold uppercase block">Inferred Network Target Payload</span>
                     
                     <!-- Main Value Box -->
                     <div class="mt-4 bg-slate-950 p-4 rounded-xl border border-slate-850 w-full">
                         <div class="text-3xl font-black text-emerald-400 tracking-tight font-mono" id="simOutput-total">0.00 kWh</div>
-                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1">Total Consumed Volume</div>
+                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-total-unit">Total Consumed Volume</div>
                     </div>
 
                     <!-- Burn Rate Box -->
                     <div class="mt-3 bg-slate-950 p-4 rounded-xl border border-slate-850 w-full">
                         <div class="text-2xl font-black text-blue-400 tracking-tight font-mono" id="simOutput-rate">0.00 kW/h</div>
-                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1">Hourly Burn Efficiency Rate</div>
+                        <div class="text-slate-400 text-[10px] uppercase font-bold tracking-wider mt-1" id="lbl-rate-unit">Hourly Burn Efficiency Rate</div>
                     </div>
                 </div>
             </div>
@@ -221,6 +206,8 @@
         const regenSlider = document.getElementById('regen');
         const regenLabel = document.getElementById('lbl-regen');
         const activeEngineFlag = document.getElementById('active-engine-flag');
+        const lblTotalUnit = document.getElementById('lbl-total-unit');
+        const lblRateUnit = document.getElementById('lbl-rate-unit');
 
         // Dynamic Label Slider Synchronization
         regenSlider.addEventListener('input', () => {
@@ -234,9 +221,13 @@
             if(activeVal === "0") {
                 activeEngineFlag.innerText = "Electric Mode (kWh Grid)";
                 activeEngineFlag.className = "text-emerald-400 font-bold uppercase";
+                lblTotalUnit.innerText = "Total Consumed Volume (Electric)";
+                lblRateUnit.innerText = "Hourly Burn Efficiency Rate (Grid)";
             } else {
                 activeEngineFlag.innerText = "Diesel Combustion (Liters)";
                 activeEngineFlag.className = "text-blue-400 font-bold uppercase";
+                lblTotalUnit.innerText = "Total Consumed Volume (Diesel)";
+                lblRateUnit.innerText = "Hourly Burn Efficiency Rate (Fuel)";
             }
         }
         engineRadios.forEach(radio => radio.addEventListener('change', adjustEngineContextDisplay));
@@ -281,18 +272,25 @@
                 });
                 const data = await response.json();
                 
+                // Logging payload parsing structure to assist in system telemetry auditing
+                console.log("Inference matrix transmission outcome data:", data);
+                
                 if (data.success) {
                     resultsCard.classList.remove('hidden');
                     
                     if(payload.engine_type === 0) {
-                        // Bind Electric Values
-                        outputTotal.innerText = `${data.prediction_total_kwh} kWh`;
-                        outputRate.innerText = `${data.prediction_kwh_per_hour} kW/h`;
+                        // Bind Electric Values with safe fallbacks if undefined
+                        const rawTotalKwh = data.prediction_total_kwh ?? '0.00';
+                        const rawRateKwh = data.prediction_kwh_per_hour ?? '0.00';
+                        outputTotal.innerText = `${rawTotalKwh} kWh`;
+                        outputRate.innerText = `${rawRateKwh} kW/h`;
                         outputTotal.className = "text-3xl font-black text-emerald-400 tracking-tight font-mono";
                     } else {
-                        // Bind Diesel Fuel Values
-                        outputTotal.innerText = `${data.prediction_total_liters} L`;
-                        outputRate.innerText = `${data.prediction_liters_per_hour} L/h`;
+                        // Bind Diesel Fuel Values with safe fallbacks if undefined
+                        const rawTotalLiters = data.prediction_total_liters ?? '0.00';
+                        const rawRateLiters = data.prediction_liters_per_hour ?? '0.00';
+                        outputTotal.innerText = `${rawTotalLiters} L`;
+                        outputRate.innerText = `${rawRateLiters} L/h`;
                         outputTotal.className = "text-3xl font-black text-blue-400 tracking-tight font-mono";
                     }
                 } else {
