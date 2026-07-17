@@ -179,6 +179,7 @@ def execute_inference():
     except Exception as ex: return jsonify({"success": False, "error": str(ex)}), 400
 
 # --- Global Navigation Patch Engine (Dynamic Injection) ---
+# --- Global Navigation Patch Engine (Dynamic Injection) ---
 @app.after_request
 def inject_global_navigation(response):
     if response.mimetype != 'text/html': return response
@@ -186,14 +187,18 @@ def inject_global_navigation(response):
     current_path = request.path
 
     nav_links = [
-        ("/", "Dashboard", None),
+        ("/", "Dashboard", "fa-gauge"),
         ("/asset-health", "Asset Health", "fa-heart-pulse"),
         ("/energy", "Energy", "fa-bolt"),
         ("/security", "Security", "fa-shield"),
+        ("/thermo_passenger", "Thermo_Passenger", "fa-temperature-half"),
+        ("/predict", "Predict", "fa-robot"),
         ("/traffic", "Traffic", "fa-traffic-light"),
-        ("/analytics", "Analytics", None),
-        ("/predict_page", "AI Lab", None)
+        ("/analytics", "Analytics", "fa-chart-line"),
+        ("/history", "History", "fa-history"),
+        ("/predict_page", "AI Lab", "fa-microscope")
     ]
+    # ... rest of your function
 
     links_html = []
     for path, label, icon in nav_links:
