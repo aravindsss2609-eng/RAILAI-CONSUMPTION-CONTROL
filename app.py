@@ -7,10 +7,9 @@ import random
 import re
 from datetime import datetime
 
-# Import custom physics-informed classes to allow pickle to safely deserialize them
+# Import custom physics-informed classes
 try:
     import train_model
-    # --- Bulletproof Pickle Namespace Alignment ---
     sys.modules['__main__'].PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
     sys.modules['__main__'].calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
     
@@ -22,7 +21,6 @@ except ImportError:
 
 app = Flask(__name__)
 
-# Expanded System Memory Cache Arrays (State Ledger)
 SYSTEM_STATE = {
     "engine_type": 0, "speed": 120.0, "weight": 450.0, "gradient": 0.5, "distance": 50.0,
     "passengers": 320, "temp": 24.0, "aux_load": 45.0, "headwind": 15.0, "drag_coeff": 0.28,
@@ -44,43 +42,26 @@ def init_inference_engine():
         import train_model
         train_model.train_system_estimators()
     
-    global PhysicsInformedEstimator, calculate_physics_power_vectorized
-    import train_model
-    sys.modules['__main__'].PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
-    sys.modules['__main__'].calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
-    
-    PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
-    calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
-    
     with open(model_path, 'rb') as f:
         MODELS = pickle.load(f)
 
 init_inference_engine()
 
-# --- Standard Core Page Mappings ---
+# --- Page Routes ---
 @app.route('/')
 def route_dashboard(): return render_template('index.html')
 
-# --- Add these 4 missing route mappings to app.py ---
-
 @app.route('/asset-health')
-def route_asset_health(): 
-    return render_template('asset_health.html')
+def route_asset_health(): return render_template('asset_health.html')
 
 @app.route('/energy')
-def route_energy(): 
-    return render_template('energy.html')
+def route_energy(): return render_template('energy.html')
 
 @app.route('/security')
-def route_security(): 
-    return render_template('security.html')
+def route_security(): return render_template('security.html')
 
 @app.route('/traffic')
-def route_traffic(): 
-    return render_template('traffic.html')
-
-@app.route('/predict_page')
-def route_predict_page(): return render_template('predict.html')
+def route_traffic(): return render_template('traffic.html')
 
 @app.route('/analytics')
 def route_analytics(): return render_template('analytics.html')
@@ -91,68 +72,18 @@ def route_charts(): return render_template('charts.html')
 @app.route('/history')
 def route_history(): return render_template('history.html')
 
-# --- Four New Industrial Module Mappings ---
-# --- Bridge API Endpoints for New Industrial Modules ---
+@app.route('/thermo_passenger')
+def route_thermo_passenger(): return render_template('thermo_passenger.html')
 
-@app.route('/api/get-asset-health', methods=['GET'])
-def get_asset_health():
-    # Maps system state to the Asset Health Dashboard metrics
-    return jsonify({
-        "mechanical_integrity": 98.4,
-        "vibration_g": 0.05,
-        "thermal_stability": SYSTEM_STATE.get("temp", 30),
-        "predictive_maintenance_km": 12000,
-        "wear_metrics": {"inverter": 99, "bearing": 82, "cooling": 96}
-    })
+@app.route('/predict_page')
+def route_predict_page(): return render_template('predict.html')
 
-@app.route('/api/get-energy-metrics', methods=['GET'])
-def get_energy_metrics():
-    # Returns data for the Energy Consumption Matrix
-    return jsonify({
-        "current_draw": SYSTEM_STATE.get("pred_kwh_per_hour", 0),
-        "recovery": 12.2,
-        "distribution": {"traction": 74, "climate": 12, "aux": 14},
-        "history": [170, 175, 180, 178, 182, SYSTEM_STATE.get("pred_kwh_per_hour", 182.4)]
-    })
-
-@app.route('/api/get-traffic-status', methods=['GET'])
-def get_traffic_status():
-    # Returns predictive load data for the Traffic & Signaling page
-    return jsonify({
-        "system_throughput": 98.2,
-        "segment_load": [45, 78, 30, 92, 55, 40],
-        "node_status": {"A-1": "CLEAR", "B-4": "CAUTION", "C-9": "CLEAR"}
-    })
-@app.route('/api/get-security-status', methods=['GET'])
-def get_security_status():
-    # Returns current security telemetry
-    return jsonify({
-        "encryption_status": "AES-256 ENCRYPTION ACTIVE",
-        "firewall_nodes": "48/48",
-        "data_integrity": "99.999%",
-        "threat_log": [
-            {"time": "19:45:02", "msg": "Handshake Validated"},
-            {"time": "19:46:15", "msg": "Node Sync Locked"}
-        ]
-    })
-# --- Operational API Framework (Retained Core) ---
-@app.route('/api/get-system-state', methods=['GET'])
-def get_system_state():
-    SYSTEM_STATE["grid_spot_price"] = round(max(0.06, min(0.35, SYSTEM_STATE["grid_spot_price"] + random.uniform(-0.01, 0.01))), 2)
-    return jsonify(SYSTEM_STATE)
-
-@app.route('/api/get-history-ledger', methods=['GET'])
-def get_history_ledger(): return jsonify(LEDGER_HISTORY)
-
-@app.route('/api/clear-history-ledger', methods=['POST'])
-def clear_history_ledger():
-    global LEDGER_HISTORY
-    LEDGER_HISTORY = []
-    return jsonify({"success": True})
-
-@app.route('/predict', methods=['POST'])
+# Fixed route: accepts both GET (to view page) and POST (to run model)
+@app.route('/predict', methods=['GET', 'POST'])
 def execute_inference():
     global SYSTEM_STATE
+    if request.method == 'GET':
+        return render_template('predict.html') # Ensure you have a predict.html
     try:
         req = request.json
         feature_cols = ['engine_type', 'speed', 'weight', 'gradient', 'distance', 'passengers', 'temp', 'aux_load', 'headwind', 'drag_coeff', 'rolling_res', 'adhesion', 'inverter_eff', 'gear_ratio', 'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 'control_override', 'simulation_pass']
@@ -178,8 +109,14 @@ def execute_inference():
         return jsonify({"success": True, "prediction_kwh_per_hour": pk_h, "prediction_total_kwh": pt_k, "prediction_liters_per_hour": pl_h, "prediction_total_liters": pt_l})
     except Exception as ex: return jsonify({"success": False, "error": str(ex)}), 400
 
-# --- Global Navigation Patch Engine (Dynamic Injection) ---
-# --- Global Navigation Patch Engine (Dynamic Injection) ---
+# --- API Endpoints ---
+@app.route('/api/get-system-state', methods=['GET'])
+def get_system_state(): return jsonify(SYSTEM_STATE)
+
+@app.route('/api/get-history-ledger', methods=['GET'])
+def get_history_ledger(): return jsonify(LEDGER_HISTORY)
+
+# --- Global Navigation ---
 @app.after_request
 def inject_global_navigation(response):
     if response.mimetype != 'text/html': return response
@@ -191,14 +128,12 @@ def inject_global_navigation(response):
         ("/asset-health", "Asset Health", "fa-heart-pulse"),
         ("/energy", "Energy", "fa-bolt"),
         ("/security", "Security", "fa-shield"),
-        ("/thermo_passenger", "Thermo_Passenger", "fa-temperature-half"),
+        ("/thermo_passenger", "Thermo", "fa-temperature-half"),
         ("/predict", "Predict", "fa-robot"),
         ("/traffic", "Traffic", "fa-traffic-light"),
         ("/analytics", "Analytics", "fa-chart-line"),
-        ("/history", "History", "fa-history"),
-        ("/predict_page", "AI Lab", "fa-microscope")
+        ("/history", "History", "fa-history")
     ]
-    # ... rest of your function
 
     links_html = []
     for path, label, icon in nav_links:
