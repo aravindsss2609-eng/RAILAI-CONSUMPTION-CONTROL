@@ -130,6 +130,7 @@ def inject_global_navigation(response):
         ("/security", "Security", "fa-shield"),
         ("/thermo_passenger", "Thermo", "fa-temperature-half"),
         ("/predict", "Predict", "fa-robot"),
+        ("/predict_page", "AI Lab", "fa-microscope"),  # Add this line
         ("/traffic", "Traffic", "fa-traffic-light"),
         ("/analytics", "Analytics", "fa-chart-line"),
         ("/history", "History", "fa-history")
