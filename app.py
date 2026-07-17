@@ -3,11 +3,15 @@ import numpy as np
 import pickle
 import os
 import sys
-import random
 import re
+import logging
 from datetime import datetime
 
-# Import custom physics-informed classes
+# Setup logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Attempt to import custom physics-informed classes for enhanced modeling
 try:
     import train_model
     sys.modules['__main__'].PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
@@ -15,12 +19,15 @@ try:
     
     PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
     calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
+    logger.info("Physics-informed classes imported successfully.")
 except ImportError:
     PhysicsInformedEstimator = None
     calculate_physics_power_vectorized = None
+    logger.warning("Physics-informed classes not found, proceeding without them.")
 
 app = Flask(__name__)
 
+# Default system state, shared globally
 SYSTEM_STATE = {
     "engine_type": 0, "speed": 120.0, "weight": 450.0, "gradient": 0.5, "distance": 50.0,
     "passengers": 320, "temp": 24.0, "aux_load": 45.0, "headwind": 15.0, "drag_coeff": 0.28,
@@ -32,94 +39,144 @@ SYSTEM_STATE = {
     "grid_spot_price": 0.14, "cabin_humidity": 45.0, "hvac_coefficient": 1.2, "thermal_load_status": "STABLE"
 }
 
+# History ledger to keep track of predictions and states
 LEDGER_HISTORY = []
+
+# Container for ML models, initialized once
 MODELS = None
 
 def init_inference_engine():
     global MODELS
     model_path = 'rail_ai_models.pkl'
     if not os.path.exists(model_path):
+        logger.info("Model file not found, training new model.")
         import train_model
         train_model.train_system_estimators()
-    
-    with open(model_path, 'rb') as f:
-        MODELS = pickle.load(f)
+    try:
+        with open(model_path, 'rb') as f:
+            MODELS = pickle.load(f)
+        logger.info("Models loaded successfully.")
+    except Exception as e:
+        logger.error(f"Error loading models: {e}")
+        MODELS = None
 
 init_inference_engine()
 
+# Helper function to perform prediction with given input parameters
+def perform_prediction(input_params):
+    if MODELS is None:
+        raise RuntimeError("Models are not loaded, prediction cannot be performed.")
+    
+    feature_cols = ['engine_type', 'speed', 'weight', 'gradient', 'distance', 'passengers', 'temp', 'aux_load', 'headwind', 'drag_coeff',
+                    'rolling_res', 'adhesion', 'inverter_eff', 'gear_ratio', 'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 
+                    'control_override', 'simulation_pass']
+    feature_vector = np.array([[float(input_params.get(col, SYSTEM_STATE.get(col))) for col in feature_cols]])
+    engine_type = int(input_params.get('engine_type', 0))
+    
+    prediction_results = {
+        "pred_kwh_per_hour": 0.0,
+        "pred_total_kwh": 0.0,
+        "pred_liters_per_hour": 0.0,
+        "pred_total_liters": 0.0,
+    }
+    
+    if engine_type == 0:  # Electric engine
+        prediction_results["pred_kwh_per_hour"] = round(float(MODELS['pred_kwh_per_hour'].predict(feature_vector)[0]), 2)
+        prediction_results["pred_total_kwh"] = round(float(MODELS['pred_total_kwh'].predict(feature_vector)[0]), 2)
+    else:  # Combustion engine
+        prediction_results["pred_liters_per_hour"] = round(float(MODELS['pred_liters_per_hour'].predict(feature_vector)[0]), 2)
+        prediction_results["pred_total_liters"] = round(float(MODELS['pred_total_liters'].predict(feature_vector)[0]), 2)
+
+    return prediction_results
+
 # --- Page Routes ---
 @app.route('/')
-def route_dashboard(): return render_template('index.html')
+def route_dashboard():
+    return render_template('index.html', system_state=SYSTEM_STATE)
 
 @app.route('/asset-health')
-def route_asset_health(): return render_template('asset_health.html')
+def route_asset_health():
+    return render_template('asset_health.html', system_state=SYSTEM_STATE)
 
 @app.route('/energy')
-def route_energy(): return render_template('energy.html')
+def route_energy():
+    return render_template('energy.html', system_state=SYSTEM_STATE)
 
 @app.route('/security')
-def route_security(): return render_template('security.html')
+def route_security():
+    return render_template('security.html', system_state=SYSTEM_STATE)
 
 @app.route('/traffic')
-def route_traffic(): return render_template('traffic.html')
+def route_traffic():
+    return render_template('traffic.html', system_state=SYSTEM_STATE)
 
 @app.route('/analytics')
-def route_analytics(): return render_template('analytics.html')
+def route_analytics():
+    return render_template('analytics.html', system_state=SYSTEM_STATE)
 
 @app.route('/charts')
-def route_charts(): return render_template('charts.html')
+def route_charts():
+    return render_template('charts.html', system_state=SYSTEM_STATE)
 
 @app.route('/history')
-def route_history(): return render_template('history.html')
+def route_history():
+    return render_template('history.html', ledger=LEDGER_HISTORY)
 
 @app.route('/thermo_passenger')
-def route_thermo_passenger(): return render_template('thermo_passenger.html')
+def route_thermo_passenger():
+    return render_template('thermo_passenger.html', system_state=SYSTEM_STATE)
 
 @app.route('/predict_page')
-def route_predict_page(): return render_template('predict.html')
+def route_predict_page():
+    return render_template('predict.html', system_state=SYSTEM_STATE)
 
-# Fixed route: accepts both GET (to view page) and POST (to run model)
+# Prediction endpoint: supports GET (view page) and POST (run model)
 @app.route('/predict', methods=['GET', 'POST'])
 def execute_inference():
     global SYSTEM_STATE
     if request.method == 'GET':
-        return render_template('predict.html') # Ensure you have a predict.html
+        return render_template('predict.html', system_state=SYSTEM_STATE)
+
+    # POST request handling
     try:
-        req = request.json
-        feature_cols = ['engine_type', 'speed', 'weight', 'gradient', 'distance', 'passengers', 'temp', 'aux_load', 'headwind', 'drag_coeff', 'rolling_res', 'adhesion', 'inverter_eff', 'gear_ratio', 'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 'control_override', 'simulation_pass']
-        input_data = [float(req.get(col, SYSTEM_STATE.get(col))) for col in feature_cols]
-        feature_vector = np.array([input_data])
-        
-        engine_type = int(req.get('engine_type', 0))
-        pk_h, pt_k, pl_h, pt_l = 0.0, 0.0, 0.0, 0.0
-        
-        if engine_type == 0:
-            pk_h = round(float(MODELS['pred_kwh_per_hour'].predict(feature_vector)[0]), 2)
-            pt_k = round(float(MODELS['pred_total_kwh'].predict(feature_vector)[0]), 2)
-        else:
-            pl_h = round(float(MODELS['pred_liters_per_hour'].predict(feature_vector)[0]), 2)
-            pt_l = round(float(MODELS['pred_total_liters'].predict(feature_vector)[0]), 2)
+        req_data = request.get_json(force=True)
+        predictions = perform_prediction(req_data)
 
-        for idx, col in enumerate(feature_cols): SYSTEM_STATE[col] = input_data[idx]
-        SYSTEM_STATE.update({'pred_kwh_per_hour': pk_h, 'pred_total_kwh': pt_k, 'pred_liters_per_hour': pl_h, 'pred_total_liters': pt_l})
+        # Update SYSTEM_STATE with new input and prediction results
+        feature_cols = ['engine_type', 'speed', 'weight', 'gradient', 'distance', 'passengers', 'temp', 'aux_load', 'headwind', 'drag_coeff',
+                        'rolling_res', 'adhesion', 'inverter_eff', 'gear_ratio', 'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 'control_override', 'simulation_pass']
 
+        for col in feature_cols:
+            if col in req_data:
+                SYSTEM_STATE[col] = float(req_data[col]) if col != 'engine_type' else int(req_data[col])
+
+        SYSTEM_STATE.update(predictions)
+
+        # Log the updated state with timestamp at the beginning of ledger
         log_entry = SYSTEM_STATE.copy()
         log_entry['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         LEDGER_HISTORY.insert(0, log_entry)
-        return jsonify({"success": True, "prediction_kwh_per_hour": pk_h, "prediction_total_kwh": pt_k, "prediction_liters_per_hour": pl_h, "prediction_total_liters": pt_l})
-    except Exception as ex: return jsonify({"success": False, "error": str(ex)}), 400
+
+        return jsonify({"success": True, **predictions})
+
+    except Exception as e:
+        logger.error(f"Error during prediction: {e}")
+        return jsonify({"success": False, "error": str(e)}), 400
 
 # --- API Endpoints ---
 @app.route('/api/get-system-state', methods=['GET'])
-def get_system_state(): return jsonify(SYSTEM_STATE)
+def get_system_state():
+    return jsonify(SYSTEM_STATE)
 
 @app.route('/api/get-history-ledger', methods=['GET'])
-def get_history_ledger(): return jsonify(LEDGER_HISTORY)
+def get_history_ledger():
+    return jsonify(LEDGER_HISTORY)
 
-# --- Global Navigation ---
+# --- Global Navigation Injection ---
 @app.after_request
 def inject_global_navigation(response):
-    if response.mimetype != 'text/html': return response
+    if response.mimetype != 'text/html':
+        return response
     html_content = response.get_data(as_text=True)
     current_path = request.path
 
@@ -130,7 +187,7 @@ def inject_global_navigation(response):
         ("/security", "Security", "fa-shield"),
         ("/thermo_passenger", "Thermo", "fa-temperature-half"),
         ("/predict", "Predict", "fa-robot"),
-        ("/predict_page", "AI Lab", "fa-microscope"),  # Add this line
+        ("/predict_page", "AI Lab", "fa-microscope"),
         ("/traffic", "Traffic", "fa-traffic-light"),
         ("/analytics", "Analytics", "fa-chart-line"),
         ("/history", "History", "fa-history")
@@ -154,9 +211,11 @@ def inject_global_navigation(response):
         </div>
     </nav>
     """
+    # Replace existing <nav>...</nav> with unified navbar in the HTML content
     patched_html = re.sub(r'<nav.*?</nav>', unified_navbar, html_content, flags=re.DOTALL)
     response.set_data(patched_html)
     return response
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Run with debug=False in production for security; debug=True is useful for development
+    app.run(host='0.0.0.0', port=5000, debug=True)
