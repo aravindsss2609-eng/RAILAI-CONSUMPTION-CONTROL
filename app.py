@@ -3,11 +3,19 @@ from flask import Flask, render_template, request, jsonify
 import numpy as np
 import pickle
 import os
+import sys
 from datetime import datetime
 
 # Import custom physics-informed classes to allow pickle to safely deserialize them
 try:
-    from train_model import PhysicsInformedEstimator, calculate_physics_power_vectorized
+    import train_model
+    # --- Bulletproof Pickle Namespace Alignment ---
+    # Force Python's __main__ namespace to recognize our custom classes before unpickling
+    sys.modules['__main__'].PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
+    sys.modules['__main__'].calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
+    
+    PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
+    calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
 except ImportError:
     # Fallback in case train_model.py hasn't been parsed yet during initial launch
     PhysicsInformedEstimator = None
@@ -39,7 +47,12 @@ def init_inference_engine():
         
     # Re-import to guarantee namespace mapping is registered in sys.modules
     global PhysicsInformedEstimator, calculate_physics_power_vectorized
-    from train_model import PhysicsInformedEstimator, calculate_physics_power_vectorized
+    import train_model
+    sys.modules['__main__'].PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
+    sys.modules['__main__'].calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
+    
+    PhysicsInformedEstimator = train_model.PhysicsInformedEstimator
+    calculate_physics_power_vectorized = train_model.calculate_physics_power_vectorized
     
     with open(model_path, 'rb') as f:
         MODELS = pickle.load(f)
