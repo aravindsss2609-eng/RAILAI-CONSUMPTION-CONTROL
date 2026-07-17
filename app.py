@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, re_path
 import numpy as np
 import pickle
 import os
@@ -39,8 +39,8 @@ SYSTEM_STATE = {
 }
 
 LEDGER_HISTORY = []
-
 MODELS = None
+
 def init_inference_engine():
     global MODELS
     model_path = 'rail_ai_models.pkl'
@@ -63,19 +63,24 @@ init_inference_engine()
 
 # --- Standard Core Page Mappings ---
 @app.route('/')
-def route_dashboard(): return render_template('index.html')
+def route_dashboard(): 
+    return render_template('index.html')
 
 @app.route('/predict_page')
-def route_predict_page(): return render_template('predict.html')
+def route_predict_page(): 
+    return render_template('predict.html')
 
 @app.route('/analytics')
-def route_analytics(): return render_template('analytics.html')
+def route_analytics(): 
+    return render_template('analytics.html')
 
 @app.route('/charts')
-def route_charts(): return render_template('charts.html')
+def route_charts(): 
+    return render_template('charts.html')
 
 @app.route('/history')
-def route_history(): return render_template('history.html')
+def route_history(): 
+    return render_template('history.html')
 
 # --- New Innovative Page Mappings (2026 Fleet Standard) ---
 @app.route('/mesh-matrix')
@@ -90,21 +95,16 @@ def route_grid_balancing():
 def route_thermo_passenger(): 
     return render_template('thermo_passenger.html')
 
-
 # --- Real-Time Operational API Framework ---
 @app.route('/api/get-system-state', methods=['GET'])
 def get_system_state():
-    # Dynamically fluctuate grid cost and thermal profiles marginally to simulate runtime environment
     SYSTEM_STATE["grid_spot_price"] = round(max(0.06, min(0.35, SYSTEM_STATE["grid_spot_price"] + random.uniform(-0.01, 0.01))), 2)
-    
-    # Calculate crude live HVAC status based on passengers and thermal ambient environment
     passenger_density = float(SYSTEM_STATE["passengers"])
     ambient_temp = float(SYSTEM_STATE["temp"])
     if passenger_density > 400 or ambient_temp > 32:
         SYSTEM_STATE["thermal_load_status"] = "HIGH OVERHEAD"
     else:
         SYSTEM_STATE["thermal_load_status"] = "STABLE"
-        
     return jsonify(SYSTEM_STATE)
 
 @app.route('/api/get-history-ledger', methods=['GET'])
@@ -162,7 +162,6 @@ def execute_inference():
     except Exception as ex:
         return jsonify({"success": False, "error": str(ex)}), 400
 
-# --- Expanded Macro Network Topologies API ---
 @app.route('/api/mesh-grid', methods=['GET'])
 def get_mesh_grid():
     base_speed = float(SYSTEM_STATE['speed'])
@@ -188,6 +187,61 @@ def get_mesh_grid():
             asset['regen_yield'] = 0.0
             
     return jsonify(mesh_assets)
+
+# --- Global Navigation Patch Engine Middleware ---
+@app.after_request
+def inject_global_navigation(response):
+    """Intercepts and updates old navigation structures dynamically across all views."""
+    if response.mimetype != 'text/html':
+        return response
+
+    html_content = response.get_data(as_text=True)
+    current_path = request.path
+
+    # Define all available operational routes 
+    nav_links = [
+        ("/", "Dashboard System", None),
+        ("/analytics", "Live Analytics", None),
+        ("/charts", "Comparative Charts", None),
+        ("/mesh-matrix", "Fleet Mesh", "fa-map-location-dot"),
+        ("/grid-balancing", "Grid Balance", "fa-scale-balanced"),
+        ("/thermo-passenger", "Thermo System", "fa-temperature-half"),
+        ("/history", "Ledger History", None),
+        ("/predict_page", "AI Predictor Laboratory", None)
+    ]
+
+    # Dynamically build unified navigation elements with proper styling states
+    links_html = []
+    for path, label, icon in nav_links:
+        is_active = (path == current_path) or (path == '/' and current_path == '')
+        class_str = "text-emerald-400 font-bold border-b border-emerald-500 pb-1" if is_active else "text-slate-400 hover:text-emerald-400 transition"
+        icon_html = f'<i class="fa-solid {icon} text-[10px]"></i> ' if icon else ''
+        links_html.append(f'<a href="{path}" class="{class_str} flex items-center gap-1">{icon_html}{label}</a>')
+
+    unified_navbar = f"""
+    <!-- Navigation Header Generated Dynamically -->
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
+            <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-mono uppercase tracking-widest">
+            {" ".join(links_html)}
+        </div>
+    </nav>
+    """
+
+    # Seamlessly overwrite legacy or alternative navbar tags
+    import re
+    if "<nav" in html_content:
+        patched_html = re.sub(r'<nav.*?</nav>', unified_navbar, html_content, flags=re.DOTALL)
+        response.set_data(patched_html)
+    elif "<body" in html_content:
+        # Prepend to top of body if layout does not contain an existing <nav> block
+        patched_html = re.sub(r'(<body[^>]*>)', r'\1' + unified_navbar, html_content, count=1)
+        response.set_data(patched_html)
+
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
