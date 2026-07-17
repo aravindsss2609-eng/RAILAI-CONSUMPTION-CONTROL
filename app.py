@@ -61,6 +61,24 @@ init_inference_engine()
 @app.route('/')
 def route_dashboard(): return render_template('index.html')
 
+# --- Add these 4 missing route mappings to app.py ---
+
+@app.route('/asset-health')
+def route_asset_health(): 
+    return render_template('asset_health.html')
+
+@app.route('/energy')
+def route_energy(): 
+    return render_template('energy.html')
+
+@app.route('/security')
+def route_security(): 
+    return render_template('security.html')
+
+@app.route('/traffic')
+def route_traffic(): 
+    return render_template('traffic.html')
+
 @app.route('/predict_page')
 def route_predict_page(): return render_template('predict.html')
 
