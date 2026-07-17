@@ -2,101 +2,112 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Energy Matrix - RailAI Industrial</title>
+    <title>Energy Matrix | RailAI Industrial</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .power-glow { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        .cyber-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.5); }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-300 font-mono">
-    <!-- Required for navigation injection -->
-    <nav>
-      <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
-            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
-            <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
-            <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
-            <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
-            <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
-            <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
-            <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
-            <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
-        </div>
-    </nav>
+<body class="bg-slate-950 text-slate-300 font-mono selection:bg-emerald-500/30">
+
+    <!-- Required Anchor for Navigation Injection -->
+    <nav></nav>
 
     <main class="p-8 max-w-7xl mx-auto">
-        <div class="mb-8">
-            <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Energy Consumption Matrix</h1>
-            <p class="text-emerald-500 text-xs font-bold uppercase mt-1">Live Power Grid: Synchronized Load Balancing</p>
-        </div>
+        <header class="mb-10 border-b border-slate-800 pb-6 flex justify-between items-end">
+            <div>
+                <h1 class="text-4xl font-black text-white uppercase tracking-tighter">Energy Matrix</h1>
+                <p class="text-emerald-500 text-xs font-bold uppercase tracking-[0.2em] mt-2">Active Power Load Balancing: System Online</p>
+            </div>
+            <div id="sync-status" class="px-3 py-1 border border-slate-700 rounded text-[10px] uppercase font-bold text-slate-400">
+                Syncing...
+            </div>
+        </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Primary Load Monitor -->
-            <div class="lg:col-span-2 bg-slate-900 p-8 border border-slate-800 rounded-lg shadow-xl">
-                <div class="flex justify-between items-center mb-8">
+            <div class="lg:col-span-2 cyber-panel p-8 rounded-lg power-glow">
+                <div class="grid grid-cols-2 gap-8 mb-8">
                     <div>
-                        <p class="text-slate-500 text-[10px] uppercase font-bold">Current Active Draw</p>
-                        <p class="text-4xl font-black text-white mt-1" id="val-load">182.4 kW/h</p>
+                        <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Instantaneous Draw</p>
+                        <p class="text-5xl font-black text-white mt-2" id="val-draw">0.0<span class="text-xl text-slate-600 ml-2">kW/h</span></p>
                     </div>
                     <div class="text-right">
-                        <p class="text-slate-500 text-[10px] uppercase font-bold">Regenerative Recovery</p>
-                        <p class="text-xl font-bold text-blue-400 mt-1">+12.2 kW/h</p>
+                        <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Regenerative Recovery</p>
+                        <p class="text-3xl font-bold text-blue-400 mt-2" id="val-recovery">+0.0 kW/h</p>
                     </div>
                 </div>
-                <div class="w-full bg-slate-800 h-4 rounded-full overflow-hidden mb-2">
-                    <div id="load-bar" class="bg-emerald-500 h-full w-[65%] transition-all duration-500"></div>
+                <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+                    <div id="load-bar" class="bg-emerald-500 h-full w-[0%] transition-all duration-1000"></div>
                 </div>
-                <div class="flex justify-between text-[10px] text-slate-500 uppercase">
-                    <span>Minimum Floor</span>
-                    <span>System Max Capacity (500 kW)</span>
+                <div class="flex justify-between mt-3 text-[10px] text-slate-600 uppercase font-bold">
+                    <span>Grid Base</span>
+                    <span>System Ceiling: 500kW</span>
                 </div>
             </div>
 
-            <!-- Efficiency Stats -->
-            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl space-y-6">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-bolt mr-2"></i> Power Distribution</h3>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Traction Motors</span><span>74%</span></div>
-                        <div class="w-full bg-slate-800 h-1.5"><div class="bg-emerald-500 h-full w-[74%]"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Climate Control</span><span>12%</span></div>
-                        <div class="w-full bg-slate-800 h-1.5"><div class="bg-blue-500 h-full w-[12%]"></div></div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-xs mb-1"><span>Auxiliary Systems</span><span>14%</span></div>
-                        <div class="w-full bg-slate-800 h-1.5"><div class="bg-slate-600 h-full w-[14%]"></div></div>
-                    </div>
+            <!-- Distribution Matrix -->
+            <div class="cyber-panel p-6 rounded-lg space-y-6">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                    <i class="fa-solid fa-bolt mr-2 text-emerald-500"></i> Power Distribution
+                </h3>
+                <div id="distribution-bars" class="space-y-4">
+                    <!-- Dynamic injection -->
                 </div>
             </div>
         </div>
 
-        <!-- Real-time Consumption Chart -->
-        <div class="mt-6 bg-slate-900 p-6 border border-slate-800 rounded-lg">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Consumption Vector Projection</h3>
-            <div class="h-48">
+        <!-- Projection Chart -->
+        <div class="mt-6 cyber-panel p-6 rounded-lg">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Consumption Projection Vector</h3>
+            <div class="h-64">
                 <canvas id="energyChart"></canvas>
             </div>
         </div>
     </main>
 
     <script>
-        // Real-time Energy Chart
-        const ctx = document.getElementById('energyChart').getContext('2d');
-        const energyChart = new Chart(ctx, {
+        const chartCtx = document.getElementById('energyChart').getContext('2d');
+        const energyChart = new Chart(chartCtx, {
             type: 'line',
-            data: {
-                labels: ['T-5', 'T-4', 'T-3', 'T-2', 'T-1', 'Now'],
-                datasets: [{ data: [170, 175, 180, 178, 182, 182.4], borderColor: '#10b981', tension: 0.4, fill: true, backgroundColor: 'rgba(16, 185, 129, 0.05)' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#334155' } } } }
+            data: { labels: ['T-5', 'T-4', 'T-3', 'T-2', 'T-1', 'Now'], datasets: [{ data: [0,0,0,0,0,0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: '#1e293b' } }, x: { grid: { display: false } } } }
         });
 
-        // Industrial Data Simulation
-        setInterval(() => {
-            const jitter = (Math.random() * 5).toFixed(1);
-            document.getElementById('val-load').innerText = (180 + parseFloat(jitter)) + " kW/h";
-            document.getElementById('load-bar').style.width = (60 + parseFloat(jitter)) + "%";
-        }, 3000);
+        async function updateEnergyMetrics() {
+            try {
+                const response = await fetch('/api/get-energy-metrics');
+                const data = await response.json();
+
+                // Update Counters
+                document.getElementById('val-draw').innerHTML = `${data.current_draw}<span class="text-xl text-slate-600 ml-2">kW/h</span>`;
+                document.getElementById('val-recovery').innerText = `+${data.recovery} kW/h`;
+                document.getElementById('load-bar').style.width = `${(data.current_draw / 500) * 100}%`;
+                document.getElementById('sync-status').innerText = "System Synced";
+                document.getElementById('sync-status').className = "px-3 py-1 border border-emerald-500/30 rounded text-[10px] uppercase font-bold text-emerald-400";
+
+                // Update Distribution Bars
+                const distContainer = document.getElementById('distribution-bars');
+                distContainer.innerHTML = Object.entries(data.distribution).map(([key, val]) => `
+                    <div>
+                        <div class="flex justify-between text-[10px] uppercase font-bold mb-2"><span>${key}</span><span>${val}%</span></div>
+                        <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden"><div class="bg-emerald-500 h-full transition-all duration-1000" style="width: ${val}%"></div></div>
+                    </div>
+                `).join('');
+
+                // Update Chart
+                energyChart.data.datasets[0].data = data.history;
+                energyChart.update();
+            } catch (e) {
+                document.getElementById('sync-status').innerText = "Link Fault";
+            }
+        }
+
+        setInterval(updateEnergyMetrics, 3000);
+        updateEnergyMetrics();
     </script>
 </body>
 </html>

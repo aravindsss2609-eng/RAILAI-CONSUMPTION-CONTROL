@@ -2,98 +2,180 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Security Command - RailAI Industrial</title>
+    <title>Cyber Security Command | RailAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .crypto-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+        .cyber-panel { background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.4); }
+        .radar-sweep { animation: radar-rotate 4s linear infinite; transform-origin: center; }
+        @keyframes radar-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-300 font-mono">
-    <!-- Required for navigation injection -->
-    <nav>
-       <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] font-mono uppercase tracking-widest">
-            <a href="/" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard</a>
-            <a href="/asset-health" class="text-slate-400 hover:text-emerald-400 transition">Asset Health</a>
-            <a href="/energy" class="text-slate-400 hover:text-emerald-400 transition">Energy</a>
-            <a href="/security" class="text-slate-400 hover:text-emerald-400 transition">Security</a>
-            <a href="/traffic" class="text-slate-400 hover:text-emerald-400 transition">Traffic</a>
-            <a href="/analytics" class="text-slate-400 hover:text-emerald-400 transition">Analytics</a>
-            <a href="/history" class="text-slate-400 hover:text-emerald-400 transition">History</a>
-            <a href="/predict_page" class="text-slate-400 hover:text-emerald-400 transition">AI Lab</a>
-        </div>
-    </nav>
+<body class="bg-slate-950 text-slate-300 font-mono selection:bg-rose-500/30 selection:text-white">
+
+    <!-- Required Anchor for Flask Navigation Patch Engine -->
+    <nav></nav>
 
     <main class="p-8 max-w-7xl mx-auto">
-        <div class="mb-8">
-            <h1 class="text-3xl font-black text-white uppercase tracking-tighter">Security & Perimeter</h1>
-            <p class="text-rose-500 text-xs font-bold uppercase mt-1 tracking-widest">Global Network Integrity: Active Monitoring</p>
-        </div>
-       
+        <!-- Infrastructure Security Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 border-b border-slate-900 pb-6 gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-white tracking-tighter uppercase flex items-center gap-3">
+                    <i class="fa-solid fa-shield-halved text-rose-500 text-2xl"></i> Perimeter Security Operations
+                </h1>
+                <p class="text-rose-500 text-xs font-bold tracking-[0.25em] uppercase mt-1">
+                    Global Network Topology • Industrial Node Protection
+                </p>
+            </div>
+            <div id="defense-lock" class="flex items-center gap-3 px-4 py-2 rounded border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-xs font-bold tracking-widest">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                SECURE BOUNDARY LAYER
+            </div>
+        </header>
 
+        <!-- Dynamic Security Matrix Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="cyber-panel p-6 rounded-lg relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Encryption Topology</p>
+                <p class="text-xl font-black text-white mt-2 crypto-glow tracking-tight uppercase" id="encryption-status">Loading Matrix...</p>
+                <div class="absolute right-4 bottom-4 text-slate-800 text-3xl opacity-20 group-hover:opacity-40 transition-opacity">
+                    <i class="fa-solid fa-lock text-emerald-400"></i>
+                </div>
+            </div>
+
+            <div class="cyber-panel p-6 rounded-lg relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-sky-500"></div>
+                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Firewall Nodes Mesh</p>
+                <p class="text-2xl font-black text-white mt-2 tracking-tight" id="firewall-nodes">-- / --</p>
+                <div class="absolute right-4 bottom-4 text-slate-800 text-3xl opacity-20 group-hover:opacity-40 transition-opacity">
+                    <i class="fa-solid fa-server text-sky-400"></i>
+                </div>
+            </div>
+
+            <div class="cyber-panel p-6 rounded-lg relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                <p class="text-slate-500 text-[10px] uppercase font-bold tracking-widest">Data Packet Integrity</p>
+                <p class="text-2xl font-black text-white mt-2 tracking-tight" id="data-integrity">--%</p>
+                <div class="absolute right-4 bottom-4 text-slate-800 text-3xl opacity-20 group-hover:opacity-40 transition-opacity">
+                    <i class="fa-solid fa-signature text-purple-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perimeter Defense Grid Split Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Main Perimeter Status -->
-            <div class="lg:col-span-2 bg-slate-900 p-8 border border-slate-800 rounded-lg shadow-xl">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <p class="text-slate-500 text-[10px] uppercase font-bold">System Perimeter Status</p>
-                        <p class="text-2xl font-black text-white mt-1">AES-256 ENCRYPTION ACTIVE</p>
-                    </div>
-                    <div class="bg-emerald-500/10 border border-emerald-500 px-3 py-1 rounded">
-                        <span class="text-emerald-400 font-bold text-[10px]">SECURED</span>
-                    </div>
+            <!-- Tactical Security Map Scan -->
+            <div class="lg:col-span-2 cyber-panel p-6 rounded-lg flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-rose-500"></i> Active Intrusion Perimeter Scanner
+                    </h3>
+                    <span class="text-[10px] text-slate-500 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded uppercase tracking-wider">Field Vector 4.0</span>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-950 p-4 border border-slate-800 rounded text-center">
-                        <p class="text-[10px] text-slate-500 uppercase">Firewall Nodes</p>
-                        <p class="font-bold text-white">48/48 ACTIVE</p>
-                    </div>
-                    <div class="bg-slate-950 p-4 border border-slate-800 rounded text-center">
-                        <p class="text-[10px] text-slate-500 uppercase">Data Integrity</p>
-                        <p class="font-bold text-white">99.999% VALIDATED</p>
+                
+                <!-- Advanced Custom Canvas HMI Element -->
+                <div class="flex-1 bg-slate-950/60 rounded border border-slate-900 min-h-[300px] relative flex items-center justify-center overflow-hidden">
+                    <svg class="absolute w-64 h-64 opacity-20" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#f43f5e" stroke-width="0.5" stroke-dasharray="2 2"/>
+                        <circle cx="50" cy="50" r="30" fill="none" stroke="#f43f5e" stroke-width="0.5"/>
+                        <circle cx="50" cy="50" r="15" fill="none" stroke="#f43f5e" stroke-width="0.5" stroke-dasharray="4 4"/>
+                        <line x1="50" y1="5" x2="50" y2="95" stroke="#f43f5e" stroke-width="0.2"/>
+                        <line x1="5" y1="50" x2="95" y2="50" stroke="#f43f5e" stroke-width="0.2"/>
+                        <g class="radar-sweep">
+                            <polygon points="50,50 50,5 95,15" fill="url(#radar-gradient)" />
+                        </g>
+                        <defs>
+                            <radialGradient id="radar-gradient" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="rgba(244, 63, 94, 0.15)"/>
+                                <stop offset="100%" stop-color="rgba(244, 63, 94, 0)"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                    
+                    <div class="z-10 text-center pointer-events-none p-4">
+                        <p class="text-[11px] font-bold text-white tracking-widest uppercase mb-1">Defensive Array Matrix</p>
+                        <p class="text-[10px] text-emerald-400 uppercase tracking-wider">All Network Nodes Synchronized & Locked</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Threat Detection Feed -->
-            <div class="bg-slate-900 p-6 border border-slate-800 rounded-lg shadow-xl">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
-                    <i class="fa-solid fa-shield-halved mr-2"></i> Threat Log
-                </h3>
-                <div id="threat-log" class="space-y-3 text-[10px]">
-                    <div class="flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-check"></i> 19:45:02 - Handshake Validated</div>
-                    <div class="flex items-center gap-2 text-emerald-400"><i class="fa-solid fa-check"></i> 19:46:15 - Node Sync Locked</div>
+            <!-- Cryptographic Incident Feed -->
+            <div class="cyber-panel p-6 rounded-lg flex flex-col">
+                <div class="flex justify-between items-center mb-6 border-b border-slate-900 pb-4">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-rose-500"></i> Real-Time Incident Log
+                    </h3>
+                    <div class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Perimeter Map Visualization -->
-        <div class="mt-6 bg-slate-900 p-6 border border-slate-800 rounded-lg flex items-center justify-between">
-            <p class="text-xs font-bold text-slate-400 uppercase">Perimeter Defense Field: <span class="text-white">Full Coverage Online</span></p>
-            <div class="flex gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-75"></div>
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse delay-150"></div>
+                
+                <div id="threat-log" class="space-y-3 flex-1 overflow-y-auto max-h-[320px] pr-2 custom-scrollbar text-[11px]">
+                    <!-- Polled rows map inside here dynamically -->
+                    <div class="text-slate-500 italic text-center py-4">Awaiting security handshake...</div>
+                </div>
             </div>
         </div>
     </main>
 
-   <script>
-    // Fetch live security status
-    fetch('/api/get-security-status')
-        .then(response => response.json())
-        .then(data => {
-            // Update static elements
-            document.querySelector('#integrity-val').innerText = data.data_integrity + " VALIDATED";
-            document.querySelector('#nodes-val').innerText = data.firewall_nodes + " ACTIVE";
-            
-            // Update Threat Log
-            const logContainer = document.getElementById('threat-log');
-            logContainer.innerHTML = ''; // Clear existing
-            data.threat_log.forEach(log => {
-                const entry = document.createElement('div');
-                entry.className = "flex items-center gap-2 text-emerald-400";
-                entry.innerHTML = `<i class="fa-solid fa-check"></i> ${log.time} - ${log.msg}`;
-                logContainer.appendChild(entry);
-            });
-        });
-</script>
+    <script>
+        // High-Reliability Telemetry Engine
+        async function fetchSecurityStatus() {
+            try {
+                const response = await fetch('/api/get-security-status');
+                if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
+                const data = await response.json();
+
+                // Explicitly update DOM selectors matching app.py schema precisely
+                document.getElementById('encryption-status').innerText = data.encryption_status || 'AES-256 ACTIVE';
+                document.getElementById('firewall-nodes').innerText = `${data.firewall_nodes} ACTIVE`;
+                document.getElementById('data-integrity').innerText = `${data.data_integrity} VALIDATED`;
+
+                // Re-compile Security Incidents/Handshakes Feed dynamically
+                const logContainer = document.getElementById('threat-log');
+                logContainer.innerHTML = ''; 
+
+                if (data.threat_log && data.threat_log.length > 0) {
+                    data.threat_log.forEach(log => {
+                        const entry = document.createElement('div');
+                        // Apply robust operational security aesthetic layers 
+                        entry.className = "p-2.5 rounded bg-slate-950 border border-slate-900 flex items-start gap-3 transition-all hover:border-slate-800";
+                        entry.innerHTML = `
+                            <span class="text-emerald-500 text-[9px] mt-0.5 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 font-bold">${log.time}</span>
+                            <div class="flex-1 text-slate-200 tracking-wide leading-relaxed font-sans text-xs">${log.msg}</div>
+                        `;
+                        logContainer.appendChild(entry);
+                    });
+                } else {
+                    logContainer.innerHTML = `<div class="text-slate-600 text-center py-6">No perimeter anomalies detected.</div>`;
+                }
+
+                // Smoothly update defense lock indicators dynamically based on integrity parameters
+                const systemStatus = parseFloat(data.data_integrity);
+                const badge = document.getElementById('defense-lock');
+                if (systemStatus < 95.0) {
+                    badge.className = "flex items-center gap-3 px-4 py-2 rounded border border-rose-500/30 bg-rose-500/5 text-rose-400 text-xs font-bold tracking-widest";
+                    badge.innerHTML = `<span class="h-2 w-2 rounded-full bg-rose-500 animate-pulse"></span> THREAT DETECTED`;
+                }
+            } catch (error) {
+                console.error("Telemetry Link Broken - Reconecting:", error);
+                // Graceful fallback display for intermittent network disconnects
+                document.getElementById('encryption-status').innerText = "LINK DISCONNECTED";
+                const badge = document.getElementById('defense-lock');
+                badge.className = "flex items-center gap-3 px-4 py-2 rounded border border-amber-500/30 bg-amber-500/5 text-amber-400 text-xs font-bold tracking-widest";
+                badge.innerHTML = `<span class="h-2 w-2 rounded-full bg-amber-500 animate-ping"></span> SYNC ERROR`;
+            }
+        }
+
+        // Loop polling every 3000ms for authentic real-time system monitoring
+        setInterval(fetchSecurityStatus, 3000);
+        
+        // Initial core execution sequence trigger
+        document.addEventListener('DOMContentLoaded', fetchSecurityStatus);
+    </script>
 </body>
 </html>
