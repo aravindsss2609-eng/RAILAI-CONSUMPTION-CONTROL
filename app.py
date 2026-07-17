@@ -92,13 +92,15 @@ def perform_prediction(input_params):
         'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 'control_override', 'simulation_pass'
     ]
     
-    # Vector generation fallback parsing
+    # 1. Safely extract features and handle defaults
     raw_vector = []
     for col in feature_cols:
-        val = input_params.get(col, SYSTEM_STATE.get(col))
+        val = input_params.get(col)
+        if val is None:
+            val = SYSTEM_STATE.get(col, 0.0)
         raw_vector.append(float(val))
         
-    feature_vector = np.array([raw_vector])
+    feature_vector = np.array([raw_vector], dtype=float)
     engine_type = int(input_params.get('engine_type', SYSTEM_STATE.get('engine_type', 0)))
     
     prediction_results = {
@@ -106,40 +108,61 @@ def perform_prediction(input_params):
         "pred_liters_per_hour": 0.0, "pred_total_liters": 0.0,
     }
     
-    # Helper to clean model outcomes safely out of native NumPy types
-    def extract_pred(model_key, data):
-        estimator = MODELS[model_key]
-        # Check if dictionary contains standalone scaler alongside models
-        if isinstance(MODELS, dict) and 'scaler' in MODELS and MODELS['scaler'] is not None:
-            processed_data = MODELS['scaler'].transform(data)
-        else:
-            processed_data = data
-            
-        prediction = estimator.predict(processed_data)
-        return round(float(prediction[0]), 2)
+    # 2. Dynamically check and handle separate or embedded scalers
+    processed_vector = feature_vector
+    try:
+        if os.path.exists('scaler.pkl'):
+            with open('scaler.pkl', 'rb') as sf:
+                local_scaler = pickle.load(sf)
+                processed_vector = local_scaler.transform(feature_vector)
+        elif isinstance(MODELS, dict) and 'scaler' in MODELS and MODELS['scaler'] is not None:
+            processed_vector = MODELS['scaler'].transform(feature_vector)
+    except Exception as scaler_err:
+        logger.warning(f"Scaling pipeline bypassed or unavailable: {scaler_err}")
+        processed_vector = feature_vector
 
-    if engine_type == 0:  # Electric Archetype Mode
-        prediction_results["pred_kwh_per_hour"] = extract_pred('pred_kwh_per_hour', feature_vector)
-        prediction_results["pred_total_kwh"] = extract_pred('pred_total_kwh', feature_vector)
+    # 3. Helper to safely execute model prediction
+    def extract_pred(model_key, data):
+        # Handle cases where MODELS is a dict of sub-models or a single direct model object
+        if isinstance(MODELS, dict) and model_key in MODELS:
+            estimator = MODELS[model_key]
+        elif hasattr(MODELS, 'predict'):
+            estimator = MODELS
+        else:
+            raise KeyError(f"Target estimator key '{model_key}' not resolved in model payload structure.")
+            
+        prediction = estimator.predict(data)
         
-        # Sync structural fallbacks
-        prediction_results["rate"] = prediction_results["pred_kwh_per_hour"]
-        prediction_results["total"] = prediction_results["pred_total_kwh"]
-        prediction_results["kwh_per_hour"] = prediction_results["pred_kwh_per_hour"]
-        prediction_results["total_kwh"] = prediction_results["pred_total_kwh"]
-        prediction_results["liters_per_hour"] = 0.0
-        prediction_results["total_liters"] = 0.0
-    else:  # Combustion Diesel Mode
-        prediction_results["pred_liters_per_hour"] = extract_pred('pred_liters_per_hour', feature_vector)
-        prediction_results["pred_total_liters"] = extract_pred('pred_total_liters', feature_vector)
-        
-        # Sync structural fallbacks
-        prediction_results["rate"] = prediction_results["pred_liters_per_hour"]
-        prediction_results["total"] = prediction_results["pred_total_liters"]
-        prediction_results["liters_per_hour"] = prediction_results["pred_liters_per_hour"]
-        prediction_results["total_liters"] = prediction_results["pred_total_liters"]
-        prediction_results["kwh_per_hour"] = 0.0
-        prediction_results["total_kwh"] = 0.0
+        # Unpack prediction if returned as a list/array
+        if hasattr(prediction, '__len__') or isinstance(prediction, np.ndarray):
+            val = prediction[0]
+        else:
+            val = prediction
+        return round(float(val), 2)
+
+    # 4. Route calculations based on engine class archetype
+    try:
+        if engine_type == 0:  # Electric Archetype Mode
+            prediction_results["pred_kwh_per_hour"] = extract_pred('pred_kwh_per_hour', processed_vector)
+            prediction_results["pred_total_kwh"] = extract_pred('pred_total_kwh', processed_vector)
+            
+            # Sync fallback aliases
+            prediction_results["rate"] = prediction_results["pred_kwh_per_hour"]
+            prediction_results["total"] = prediction_results["pred_total_kwh"]
+            prediction_results["kwh_per_hour"] = prediction_results["pred_kwh_per_hour"]
+            prediction_results["total_kwh"] = prediction_results["pred_total_kwh"]
+        else:  # Combustion Diesel Mode
+            prediction_results["pred_liters_per_hour"] = extract_pred('pred_liters_per_hour', processed_vector)
+            prediction_results["pred_total_liters"] = extract_pred('pred_total_liters', processed_vector)
+            
+            # Sync fallback aliases
+            prediction_results["rate"] = prediction_results["pred_liters_per_hour"]
+            prediction_results["total"] = prediction_results["pred_total_liters"]
+            prediction_results["liters_per_hour"] = prediction_results["pred_liters_per_hour"]
+            prediction_results["total_liters"] = prediction_results["pred_total_liters"]
+    except Exception as pred_err:
+        logger.error(f"Error encountered inside internal prediction handlers: {pred_err}")
+        raise pred_err
 
     return prediction_results
 
