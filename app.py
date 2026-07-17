@@ -70,8 +70,10 @@ def perform_prediction(input_params):
     feature_cols = ['engine_type', 'speed', 'weight', 'gradient', 'distance', 'passengers', 'temp', 'aux_load', 'headwind', 'drag_coeff',
                     'rolling_res', 'adhesion', 'inverter_eff', 'gear_ratio', 'wheel_diam', 'motor_freq', 'brake_pressure', 'regen', 
                     'control_override', 'simulation_pass']
+    
+    # Safely pull values, defaulting back to SYSTEM_STATE if missing from request payload
     feature_vector = np.array([[float(input_params.get(col, SYSTEM_STATE.get(col))) for col in feature_cols]])
-    engine_type = int(input_params.get('engine_type', 0))
+    engine_type = int(input_params.get('engine_type', SYSTEM_STATE.get('engine_type', 0)))
     
     prediction_results = {
         "pred_kwh_per_hour": 0.0,
@@ -83,9 +85,21 @@ def perform_prediction(input_params):
     if engine_type == 0:  # Electric engine
         prediction_results["pred_kwh_per_hour"] = round(float(MODELS['pred_kwh_per_hour'].predict(feature_vector)[0]), 2)
         prediction_results["pred_total_kwh"] = round(float(MODELS['pred_total_kwh'].predict(feature_vector)[0]), 2)
+        
+        # Build unified fallback aliases to fulfill any variant of frontend JavaScript naming
+        prediction_results["rate"] = prediction_results["pred_kwh_per_hour"]
+        prediction_results["total"] = prediction_results["pred_total_kwh"]
+        prediction_results["kwh_per_hour"] = prediction_results["pred_kwh_per_hour"]
+        prediction_results["total_kwh"] = prediction_results["pred_total_kwh"]
     else:  # Combustion engine
         prediction_results["pred_liters_per_hour"] = round(float(MODELS['pred_liters_per_hour'].predict(feature_vector)[0]), 2)
         prediction_results["pred_total_liters"] = round(float(MODELS['pred_total_liters'].predict(feature_vector)[0]), 2)
+        
+        # Build unified fallback aliases
+        prediction_results["rate"] = prediction_results["pred_liters_per_hour"]
+        prediction_results["total"] = prediction_results["pred_total_liters"]
+        prediction_results["liters_per_hour"] = prediction_results["pred_liters_per_hour"]
+        prediction_results["total_liters"] = prediction_results["pred_total_liters"]
 
     return prediction_results
 
@@ -139,7 +153,7 @@ def execute_inference():
 
     # POST request handling
     try:
-        req_data = request.get_json(force=True)
+        req_data = request.get_json(force=True) or {}
         predictions = perform_prediction(req_data)
 
         # Update SYSTEM_STATE with new input and prediction results
@@ -217,5 +231,4 @@ def inject_global_navigation(response):
     return response
 
 if __name__ == '__main__':
-    # Run with debug=False in production for security; debug=True is useful for development
     app.run(host='0.0.0.0', port=5000, debug=True)
