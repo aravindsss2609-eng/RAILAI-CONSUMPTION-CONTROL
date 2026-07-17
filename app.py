@@ -5,6 +5,14 @@ import pickle
 import os
 from datetime import datetime
 
+# Import custom physics-informed classes to allow pickle to safely deserialize them
+try:
+    from train_model import PhysicsInformedEstimator, calculate_physics_power_vectorized
+except ImportError:
+    # Fallback in case train_model.py hasn't been parsed yet during initial launch
+    PhysicsInformedEstimator = None
+    calculate_physics_power_vectorized = None
+
 app = Flask(__name__)
 
 # System Memory Cache Arrays (State Ledger)
@@ -28,6 +36,11 @@ def init_inference_engine():
     if not os.path.exists(model_path):
         import train_model
         train_model.train_system_estimators()
+        
+    # Re-import to guarantee namespace mapping is registered in sys.modules
+    global PhysicsInformedEstimator, calculate_physics_power_vectorized
+    from train_model import PhysicsInformedEstimator, calculate_physics_power_vectorized
+    
     with open(model_path, 'rb') as f:
         MODELS = pickle.load(f)
 
