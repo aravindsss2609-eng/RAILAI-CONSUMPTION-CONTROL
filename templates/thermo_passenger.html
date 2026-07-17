@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RailAI Control - Thermodynamic Impact Matrix</title>
+    <style>
+        body { background-color: #050b14; color: #d1ecf1; font-family: monospace; padding: 20px; }
+        .header { border-bottom: 2px solid #00ffcc; padding-bottom: 10px; margin-bottom: 25px; }
+        .grid-container { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+        .menu a { display: block; color: #00ffcc; text-decoration: none; padding: 8px; margin: 5px 0; border: 1px solid #00ffcc; text-align: center; }
+        .menu a:hover { background: #00ffcc; color: #050b14; }
+        .card { background: #0a1424; border: 1px solid #1a2f4c; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .metric-highlight { font-size: 30px; color: #00ffcc; font-weight: bold; }
+        .status-banner { padding: 10px; text-align: center; font-weight: bold; margin-top: 15px; border: 1px solid #00ffcc;}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RAIL<span style="color:#00ffcc;">AI</span> CONTROL // SMART-PASSENGER THERMODYNAMIC IMPACT MATRIX</h1>
+    </div>
+    <div class="grid-container">
+        <div class="menu">
+            <a href="/">DASHBOARD</a>
+            <a href="/predict_page">LABORATORY</a>
+            <a href="/mesh-matrix">FLEET MESH</a>
+            <a href="/grid-balancing">GRID BALANCE</a>
+            <a href="/thermo-passenger" style="background:#00ffcc; color:#050b14;">THERMO SYSTEM</a>
+        </div>
+        <div>
+            <div class="card">
+                <h3>BIOMETRIC THERMAL LOAD OVERHEADS</h3>
+                <p>Monitors how passenger counts interact directly with interior HVAC systems and subsequent total energy payloads.</p>
+                <table style="width:100%; border-spacing: 15px;">
+                    <tr>
+                        <td>
+                            <div>PASSENGER MASS CAP (COUNT)</div>
+                            <div class="metric-highlight" id="lbl-passengers">320</div>
+                        </td>
+                        <td>
+                            <div>OUTSIDE AMBIENT TEMPERATURE</div>
+                            <div class="metric-highlight" id="lbl-temp">24°C</div>
+                        </td>
+                        <td>
+                            <div>AUXILIARY HVAC ALLOCATION</div>
+                            <div class="metric-highlight" id="lbl-aux">45 kW</div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="status-banner" id="thermal-banner">THERMAL OVERHEAD STATUS: STABLE</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateThermalMatrix() {
+            fetch('/api/get-system-state')
+                .then(res => res.json())
+                .then(state => {
+                    document.getElementById('lbl-passengers').innerText = state.passengers;
+                    document.getElementById('lbl-temp').innerText = state.temp + " °C";
+                    document.getElementById('lbl-aux').innerText = state.aux_load + " kW";
+                    
+                    let banner = document.getElementById('thermal-banner');
+                    banner.innerText = `THERMAL OVERHEAD STATUS: ${state.thermal_load_status}`;
+                    if(state.thermal_load_status === "HIGH OVERHEAD") {
+                        banner.style.borderColor = "#ff3333";
+                        banner.style.color = "#ff3333";
+                    } else {
+                        banner.style.borderColor = "#00ffcc";
+                        banner.style.color = "#00ffcc";
+                    }
+                });
+        }
+        updateThermalMatrix();
+        setInterval(updateThermalMatrix, 2000);
+    </script>
+</body>
+</html>

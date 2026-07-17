@@ -12,15 +12,18 @@
 <body class="bg-slate-950 text-slate-100 font-mono text-xs min-h-screen">
 
     <!-- Navigation Header -->
-    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <nav class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center space-x-3">
             <div class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
             <span class="text-lg font-black tracking-wider text-slate-100">RAIL<span class="text-emerald-500">AI</span> CONTROL</span>
         </div>
-        <div class="flex space-x-6 text-xs font-mono uppercase tracking-widest">
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-mono uppercase tracking-widest">
             <a href="/" id="nav-dash" class="text-emerald-400 font-bold border-b border-emerald-500 pb-1">Dashboard System</a>
             <a href="/analytics" id="nav-analytics" class="text-slate-400 hover:text-emerald-400 transition">Live Analytics</a>
             <a href="/charts" id="nav-charts" class="text-slate-400 hover:text-emerald-400 transition">Comparative Charts</a>
+            <a href="/mesh-matrix" id="nav-mesh" class="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1"><i class="fa-solid fa-map-location-dot text-[10px]"></i> Fleet Mesh</a>
+            <a href="/grid-balancing" id="nav-grid" class="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1"><i class="fa-solid fa-scale-balanced text-[10px]"></i> Grid Balance</a>
+            <a href="/thermo-passenger" id="nav-thermo" class="text-slate-400 hover:text-emerald-400 transition flex items-center gap-1"><i class="fa-solid fa-temperature-half text-[10px]"></i> Thermo System</a>
             <a href="/history" id="nav-history" class="text-slate-400 hover:text-emerald-400 transition">Ledger History</a>
             <a href="/predict_page" id="nav-predict" class="text-slate-400 hover:text-emerald-400 transition">AI Predictor Laboratory</a>
         </div>

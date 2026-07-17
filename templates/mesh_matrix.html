@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RailAI Control - Fleet Mesh Matrix</title>
+    <style>
+        body { background-color: #050b14; color: #d1ecf1; font-family: monospace; padding: 20px; }
+        .header { border-bottom: 2px solid #00ffcc; padding-bottom: 10px; margin-bottom: 25px; }
+        .grid-container { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+        .menu a { display: block; color: #00ffcc; text-decoration: none; padding: 8px; margin: 5px 0; border: 1px solid #00ffcc; text-align: center; }
+        .menu a:hover { background: #00ffcc; color: #050b14; }
+        .card { background: #0a1424; border: 1px solid #1a2f4c; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .node-list { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .node-list th, .node-list td { border: 1px solid #1a2f4c; padding: 12px; text-align: left; }
+        .node-list th { background-color: #0e1e38; color: #00ffcc; }
+        .status-badge { color: #050b14; background: #00ffcc; padding: 3px 6px; font-weight: bold; font-size: 11px; }
+        .map-canvas-mock { height: 250px; background: repeating-linear-gradient(45deg, #0d1b2a, #0d1b2a 10px, #112236 10px, #112236 20px); border: 1px dashed #00ffcc; border-radius: 4px; position: relative; margin-top: 15px; }
+        .pulse-dot { width: 10px; height: 10px; background-color: #00ffcc; border-radius: 50%; position: absolute; box-shadow: 0 0 10px #00ffcc; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RAIL<span style="color:#00ffcc;">AI</span> CONTROL // NETWORK FLEET MESH GEO-SPATIAL MATRIX</h1>
+    </div>
+    <div class="grid-container">
+        <div class="menu">
+            <a href="/">DASHBOARD</a>
+            <a href="/predict_page">LABORATORY</a>
+            <a href="/mesh-matrix" style="background:#00ffcc; color:#050b14;">FLEET MESH</a>
+            <a href="/grid-balancing">GRID BALANCE</a>
+            <a href="/thermo-passenger">THERMO SYSTEM</a>
+        </div>
+        <div>
+            <div class="card">
+                <h3>LIVE CLUSTER GEO-SPATIAL MAP SIMULATION</h3>
+                <div class="map-canvas-mock">
+                    <div class="pulse-dot" style="top: 30%; left: 25%;"></div>
+                    <div class="pulse-dot" style="top: 55%; left: 60%;"></div>
+                    <div class="pulse-dot" style="top: 75%; left: 45%;"></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>ACTIVE FLEET CLUSTER NODES</h3>
+                <table class="node-list">
+                    <thead>
+                        <tr>
+                            <th>NODE ID</th>
+                            <th>ASSET CALLSIGN</th>
+                            <th>VELOCITY (KM/H)</th>
+                            <th>GROSS WEIGHT</th>
+                            <th>CURRENT METRIC INFERENCE</th>
+                            <th>NETWORK STATE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mesh-tbody">
+                        <!-- Data fetched dynamically via API -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadMeshGrid() {
+            fetch('/api/mesh-grid')
+                .then(res => res.json())
+                .then(data => {
+                    let html = '';
+                    data.forEach(node => {
+                        html += `<tr>
+                            <td><strong>${node.id}</strong></td>
+                            <td>${node.name}</td>
+                            <td>${node.speed} km/h</td>
+                            <td>${node.weight} Tons</td>
+                            <td style="color:#00ffcc;">${node.metrics}</td>
+                            <td><span class="status-badge">${node.status}</span></td>
+                        </tr>`;
+                    });
+                    document.getElementById('mesh-tbody').innerHTML = html;
+                });
+        }
+        loadMeshGrid();
+        setInterval(loadMeshGrid, 3000);
+    </script>
+</body>
+</html>
