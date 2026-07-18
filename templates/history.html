@@ -89,7 +89,6 @@
                     const typeLabel = item.engine_type === 0 ? "ELECTRIC" : "DIESEL";
                     const typeClass = item.engine_type === 0 ? "text-emerald-400" : "text-blue-400";
                     
-                    // FIX: Replaced outdated item.pred_ prefixes with direct backend keys
                     const totalStr = item.engine_type === 0 ? `${item.total_kwh ?? '0.00'} kWh` : `${item.total_liters ?? '0.00'} L`;
                     const rateStr = item.engine_type === 0 ? `${item.kwh_per_hour ?? '0.00'} kW/h` : `${item.liters_per_hour ?? '0.00'} L/h`;
 
@@ -113,7 +112,8 @@
         async function wipeLedgerHistory() {
             if(!confirm("Are you sure you want to flush all system operational records?")) return;
             try {
-                await fetch('/api/clear-history-ledger', { method: 'POST' });
+                // FIXED: Changed endpoint from '/api/clear-history-ledger' to match app.py route '/api/flush-history'
+                await fetch('/api/flush-history', { method: 'POST' });
                 renderLedgerHistoryRows();
             } catch (err) {
                 console.error("Failed to clean system database ledger collections:", err);
